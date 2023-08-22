@@ -5,6 +5,7 @@ namespace App\DataFixtures;
 
 use App\Entity\User;
 use App\Entity\Garden;
+use App\Entity\Picture;
 use App\Service\unsplashApiService;
 use DateTimeImmutable;
 use Doctrine\Bundle\FixturesBundle\Fixture;
@@ -49,7 +50,7 @@ class AppFixtures extends Fixture
             $garden->setSurface($faker->);
             $garden->setPhoneAccess($faker->);
             $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
-            $garden->setuser_id($faker->);
+            $garden->setUser($faker->);
 
             $gardenList[] = $gardenList;
 
@@ -79,7 +80,9 @@ class AppFixtures extends Fixture
 
             // J'instancie un nouvel objet picture
             $picture = new Picture();
-
+            $picture->setName($this->unsplashApi->fetchPhotos("garden"));
+            $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
+            $picture->setGarden($this->unsplashApi->fetchPhotos(garden));
         // J'execute les requetes sql
         $manager->flush();
     }
