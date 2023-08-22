@@ -14,7 +14,7 @@ use Ottaviano\Faker\Gravatar;
 use App\Service\UnsplashApiService;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
-
+use App\DataFixtures\Provider\AppProvider;
 
 class AppFixtures extends Fixture
 {
@@ -29,10 +29,11 @@ class AppFixtures extends Fixture
 
     public function load(ObjectManager $manager): void
     {
-        // si je veux mon faker en français, je definis la langue dans le create
         $faker = Factory::create("fr_FR");
         // utilisation de library gravatar pour les avatars
-        $faker->addProvider(new Ottaviano\Faker\Gravatar($faker));
+        $faker->addProvider(new Gravatar($faker));
+        // utilisation de notre provider pour les roles
+        $faker->addProvider(new AppProvider());
 
         //! USER
 
@@ -55,58 +56,62 @@ class AppFixtures extends Fixture
 
             $manager->persist($user);
 
+        }
+
+        // ! Garden
+
+        // Je crée un tableau vide
+        $gardenList = [];
+        for ($i = 0; $i < 20; $i++) {
+            // J'instancie un nouvel objet garden
+            $garden = new Garden();
+            $garden->setTitle($faker->text(100));
+            $garden->setDescription($faker->text(240));
+            $garden->setAddress($faker->streetAddress());
+            $garden->setPostalCode($faker->postcode());
+            $garden->setCity($faker->city());
+            $garden->setWater($faker->boolean());
+            $garden->setTool($faker->boolean());
+            $garden->setShed($faker->boolean());
+            $garden->setCultivation($faker->boolean());
+            $garden->setState($faker->text(10));
+            $garden->setSurface($faker->numberBetween(1, 1000));
+            $garden->setPhoneAccess($faker->boolean());
+            $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
+            $garden->setUser($userList[array_rand($userList)]);
+
+            $gardenList[] = $garden;
+
+            $manager->persist($garden);
+        }
+
+        //! Favorite
+
+        for ($i = 0; $i < 20; $i++) {
+            $favorite = new Favorite();
+            $favorite->setUser($userList[array_rand($userList)]);
+            $favorite->setGarden($gardenList[array_rand($gardenList)]);
+
+            $manager->persist($favorite);
+        }
 
 
-            // ! Garden
-
-            // Je crée un tableau vide
-            $gardenList = [];
-            for ($i = 0; $i < 20; $i++) {
-                // J'instancie un nouvel objet garden
-                $garden = new Garden();
-                $garden->setTitle($faker->text(1000));
-                $garden->setDescription($faker->text(240));
-                $garden->setAddress($faker->streetAddress());
-                $garden->setPostalCode($faker->postcode());
-                $garden->setCity($faker->city());
-                $garden->setWater($faker->boolean());
-                $garden->setTool($faker->boolean());
-                $garden->setShed($faker->boolean());
-                $garden->setCultivation($faker->boolean());
-                $garden->setState($faker->text(10));
-                $garden->setSurface($faker->numberBetween(1, 1000));
-                $garden->setPhoneAccess($faker->boolean());
-                $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
-                $garden->setUser($userList[array_rand($userList)]);
-
-                $gardenList[] = $garden;
-
-                //! Favorite
-
-                $favorite = new Favorite;
-                $favorite->setUser($userList[array_rand($userList)]);
-                $favorite->setGarden($gardenList[array_rand($gardenList)]);
-
-
-                $manager->persist($garden);
-            }
-
-
-
-            // ! Picture
-
+        // ! Picture
+        for ($i = 0; $i < 5; $i++) {
             // J'instancie un nouvel objet picture
+
             $picture = new Picture();
             $picture->setName($this->unsplashApi->fetchPhotosRandom("garden"));
             $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
             $picture->setGarden($gardenList[array_rand($gardenList)]);
 
-
-
-
-
-            // J'execute les requetes sql
-            $manager->flush();
+            $manager->persist($picture);
         }
+
+
+
+
+        // J'execute les requetes sql
+        $manager->flush();
     }
 }

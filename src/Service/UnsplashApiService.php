@@ -61,7 +61,7 @@ class UnsplashApiService
                 ]
             ]
         );
-        $photoUrl = $response[ 'urls' ][ 'regular' ];
+        $photoUrl = $response->toArray()[ 'urls' ][ 'regular' ];
         return $photoUrl;
 
     }
