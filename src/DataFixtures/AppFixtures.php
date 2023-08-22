@@ -3,6 +3,8 @@
 
 
 namespace App\DataFixtures;
+
+use App\Entity\Favorite;
 use Faker\Factory;
 use App\Entity\User;
 use App\Entity\Garden;
@@ -48,9 +50,11 @@ class AppFixtures extends Fixture
             $user->setRole($role);
             $user->setAvatar($faker->gravatarUrl());
             $user->setCreatedAt(new DateTimeImmutable($faker->date()));
+
             $userList[] = $user;
 
             $manager->persist($user);
+
 
 
             // ! Garden
@@ -74,10 +78,15 @@ class AppFixtures extends Fixture
                 $garden->setPhoneAccess($faker->boolean());
                 $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
                 $garden->setUser($userList[array_rand($userList)]);
-                $garden->addFavorite($user);
-
 
                 $gardenList[] = $garden;
+
+                //! Favorite
+
+                $favorite = new Favorite;
+                $favorite->setUser($userList[array_rand($userList)]);
+                $favorite->setGarden($gardenList[array_rand($gardenList)]);
+
 
                 $manager->persist($garden);
             }
@@ -91,8 +100,8 @@ class AppFixtures extends Fixture
             $picture->setName($this->unsplashApi->fetchPhotosRandom("garden"));
             $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
             $picture->setGarden($gardenList[array_rand($gardenList)]);
-            
-           
+
+
 
 
 
