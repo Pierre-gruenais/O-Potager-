@@ -11,7 +11,7 @@ use App\Entity\Garden;
 use DateTimeImmutable;
 use App\Entity\Picture;
 use Ottaviano\Faker\Gravatar;
-use App\Service\nsplashApiService;
+use App\Service\UnsplashApiService;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
