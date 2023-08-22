@@ -53,7 +53,7 @@ class AppFixtures extends Fixture
 
             $gardenList[] = $gardenList;
 
-            $manager->persist($gardenList);
+            $manager->persist($garden);
         }
 
         //! USER
@@ -73,10 +73,12 @@ class AppFixtures extends Fixture
             $user->setCreatedAt($faker->);
             $user->setUpdatedAt($faker->);
 
-            // On oublis pas de persister l'objet
-            $manager->persist($admin);
+            $manager->persist($user);
                 
-       
+       // ! Picture
+
+            // J'instancie un nouvel objet picture
+            $picture = new Picture();
 
         // J'execute les requetes sql
         $manager->flush();
