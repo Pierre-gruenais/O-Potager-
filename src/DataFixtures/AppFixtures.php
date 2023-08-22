@@ -30,13 +30,35 @@ class AppFixtures extends Fixture
         $faker = Factory::create("fr_FR");
         // utilisation de library gravatar pour les avatars
         $faker->addProvider(new Ottaviano\Faker\Gravatar($faker));
+        
+        //! USER
+
+            // Je crée un tableau vide
+            $userList = [];
+        for ($i = 0; $i < 7; $i++) {
+            // j'utilise mon provider pour récupérer un $faker->
+            $role = $faker->role();
+            // J'instancie un nouvel objet user
+            $user = new User();
+            $user->setUsername($faker->);
+            $user->setPassword($faker->);
+            $user->setEmail($faker->);
+            $user->setPhone($faker->);
+            $user->setRole($role);
+            $user->setAvatar($faker->gravatarUrl());
+            $user->setCreatedAt(new DateTimeImmutable($faker->date()));
+            $userList[] = $user;
+
+            $manager->persist($user);
+
+
         // ! Garden
+
         // Je crée un tableau vide
         $gardenList = [];
         for ($i = 0; $i < 20; $i++) {
         // J'instancie un nouvel objet garden
             $garden = new Garden();
-
             $garden->setTitle($faker->);
             $garden->setDescription($faker->);
             $garden->setAddress($faker->);
@@ -50,31 +72,14 @@ class AppFixtures extends Fixture
             $garden->setSurface($faker->);
             $garden->setPhoneAccess($faker->);
             $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
-            $garden->setUser($faker->);
+            $garden->setUser($userList[array_rand($userList)]);
 
-            $gardenList[] = $gardenList;
+            $gardenList[] = $garden;
 
             $manager->persist($garden);
         }
 
-        //! USER
-
-        for ($i = 0; $i < 7; $i++) {
-            // j'utilise mon provider pour récupérer un $faker->
-            $role = $faker->role();
-            // J'instancie un nouvel objet user
-            $user = new User();
-           
-            $user->setUsername($faker->);
-            $user->setPassword($faker->);
-            $user->setEmail($faker->);
-            $user->setPhone($faker->);
-            $user->setRole($role);
-            $user->setAvatar($faker->gravatarUrl());
-            $user->setCreatedAt(new DateTimeImmutable($faker->date()));
-            
-
-            $manager->persist($user);
+        
                 
        // ! Picture
 
@@ -82,8 +87,9 @@ class AppFixtures extends Fixture
             $picture = new Picture();
             $picture->setName($this->unsplashApi->fetchPhotos("garden"));
             $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
-            $picture->setGarden($this->unsplashApi->fetchPhotos(garden));
+            $picture->setGarden($gardenList[array_rand($gardenList)]);
         // J'execute les requetes sql
         $manager->flush();
     }
+}
 }
