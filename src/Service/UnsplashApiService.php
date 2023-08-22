@@ -42,7 +42,7 @@ class UnsplashApiService
         return $response->toArray();
 
     }
-    public function fetchPhotosRandom()
+    public function fetchPhotosRandom($search)
     {
 
         // déclenche une requête asynchrone
@@ -55,14 +55,15 @@ class UnsplashApiService
                 // les paramètres ici la clé api et la recherche par mot-clé
                 "query" => [
                     "client_id" => $this->apiKey,
-                  
+                    "query"     => $search
+
 
                 ]
             ]
         );
-
-        return $response;
+        $photoUrl = $response[ 'urls' ][ 'regular' ];
+        return $photoUrl;
 
     }
-  
+
 }
