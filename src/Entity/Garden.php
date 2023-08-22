@@ -6,6 +6,7 @@ use App\Repository\GardenRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=GardenRepository::class)
@@ -21,56 +22,71 @@ class Garden
 
     /**
      * @ORM\Column(type="string", length=128)
+     * @Assert\NotBlank
+     * @Assert\Length(max=128)
      */
     private $title;
 
     /**
      * @ORM\Column(type="string", length=1000)
+     * @Assert\NotBlank
+     * @Assert\Length(max=1000)
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=240)
+     * @Assert\NotBlank
+     * @Assert\Length(max=240)
      */
     private $address;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank
      */
     private $postalCode;
 
     /**
      * @ORM\Column(type="string", length=128)
+     * @Assert\NotBlank
+     * @Assert\Length(max=128)
      */
     private $city;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank
      */
     private $water;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank
      */
     private $tool;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank
      */
     private $shed;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank
      */
     private $cultivation;
 
     /**
      * @ORM\Column(type="integer")
+     * @Assert\NotBlank
      */
     private $surface;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Assert\NotBlank
      */
     private $phoneAccess;
 
@@ -86,6 +102,8 @@ class Garden
 
     /**
      * @ORM\Column(type="string", length=128)
+     * @Assert\NotBlank
+     * @Assert\Length(max=128)
      */
     private $state;
 
