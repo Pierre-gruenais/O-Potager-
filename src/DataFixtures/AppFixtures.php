@@ -27,7 +27,8 @@ class AppFixtures extends Fixture
     {
         // si je veux mon faker en français, je definis la langue dans le create
         $faker = Factory::create("fr_FR");
-
+        // utilisation de library gravatar pour les avatars
+        $faker->addProvider(new Ottaviano\Faker\Gravatar($faker));
         // ! Garden
         // Je crée un tableau vide
         $gardenList = [];
@@ -47,8 +48,7 @@ class AppFixtures extends Fixture
             $garden->setState($faker->);
             $garden->setSurface($faker->);
             $garden->setPhoneAccess($faker->);
-            $garden->setCreatedAt($faker->);
-            $garden->setUpdatedAt($faker->);
+            $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
             $garden->setuser_id($faker->);
 
             $gardenList[] = $gardenList;
@@ -69,9 +69,9 @@ class AppFixtures extends Fixture
             $user->setEmail($faker->);
             $user->setPhone($faker->);
             $user->setRole($role);
-            $user->setAvatar($faker->);
-            $user->setCreatedAt($faker->);
-            $user->setUpdatedAt($faker->);
+            $user->setAvatar($faker->gravatarUrl());
+            $user->setCreatedAt(new DateTimeImmutable($faker->date()));
+            
 
             $manager->persist($user);
                 
