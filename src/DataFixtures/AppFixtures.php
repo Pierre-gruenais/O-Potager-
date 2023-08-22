@@ -11,7 +11,7 @@ use App\Entity\Garden;
 use DateTimeImmutable;
 use App\Entity\Picture;
 use Ottaviano\Faker\Gravatar;
-use App\Service\unsplashApiService;
+use App\Service\UnsplashApiService;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 
@@ -22,7 +22,7 @@ class AppFixtures extends Fixture
 
     private $unsplashApi;
 
-    public function __construct(unsplashApiService $unsplashApi)
+    public function __construct(UnsplashApiService $unsplashApi)
     {
         $this->unsplashApi = $unsplashApi;
     }
