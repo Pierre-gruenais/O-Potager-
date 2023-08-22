@@ -82,6 +82,17 @@ class Garden
      */
     private $updatedAt;
 
+    /**
+     * @ORM\Column(type="string", length=128)
+     */
+    private $state;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -239,6 +250,30 @@ class Garden
     public function setUpdatedAt(?\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getState(): ?string
+    {
+        return $this->state;
+    }
+
+    public function setState(string $state): self
+    {
+        $this->state = $state;
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }
