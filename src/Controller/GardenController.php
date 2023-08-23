@@ -9,7 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 class GardenController extends AbstractController
 {
     /**
-     * @Route("/garden", name="app_api_gardensde toto")
+     * @Route("/garden", name="app_api_garden")
      */
     public function index(): JsonResponse
     {
