@@ -68,7 +68,7 @@ class AppFixtures extends Fixture
             $garden->setTitle($faker->text(100));
             $garden->setDescription($faker->text(240));
             $garden->setAddress($faker->streetAddress());
-            $garden->setPostalCode($faker->postcode());
+            $garden->setPostalCode($faker->numberBetween(1000, 95000));
             $garden->setCity($faker->city());
             $garden->setWater($faker->boolean());
             $garden->setTool($faker->boolean());
@@ -101,6 +101,7 @@ class AppFixtures extends Fixture
             // J'instancie un nouvel objet picture
 
             $picture = new Picture();
+            // utilisation de l'api Unsplash pour generer des photos de garden
             $picture->setName($this->unsplashApi->fetchPhotosRandom("garden"));
             $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
             $picture->setGarden($gardenList[array_rand($gardenList)]);
