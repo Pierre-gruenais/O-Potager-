@@ -5,7 +5,7 @@ namespace App\Service;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 
-class NominatimService
+class NominatimApiService
 {
 
     private $client;
@@ -44,9 +44,9 @@ class NominatimService
         $cityCoordinates = [];
         $cityCoordinates[ "lat" ] = $cityAllCoordinates[ 0 ][ "lat" ];
         $cityCoordinates[ "lon" ] = $cityAllCoordinates[ 0 ][ "lon" ];
-        // je retourne ce tableau sous format json
+        // je retourne ce tableau 
 
-        return json_encode($cityCoordinates);
+        return $cityCoordinates;
 
     }
 
