@@ -3,8 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Entity\Garden;
 use App\Repository\FavoriteRepository;
-use App\Repository\GardenRepository;
+
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -17,6 +18,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
 
 class UserController extends AbstractController
 {
@@ -186,12 +188,12 @@ class UserController extends AbstractController
      * @Route("/api/users/favorites/{id}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
      * on supprime un favoris d'un utilisateur
      */
-    public function deleteFavoriteById(int $id,FavoriteRepository $favoriteRepository,EntityManagerInterface $em): JsonResponse
+    public function deleteFavoriteById(int $id, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
     {
         //  potentiellement j'ai une erreur si le favoris n'existe pas
         // on recupere le favoris
         $favorite = $favoriteRepository->find($id);
-        
+
         try {
             $em->remove($favorite);
         } catch (ORMInvalidArgumentException $e) {
@@ -204,8 +206,40 @@ class UserController extends AbstractController
 
     }
 
-//! DELETE FAVORITE-id USER 
+    //! DELETE FAVORITE-id USER 
 
-//! DELETE FAVORITES USER
+    //! DELETE FAVORITES USER
+
+    //! DELETE FAVORITE USER
+
+
+    /**
+     * @Route("/api/users/{id}/favorites", name="app_api_user_deleteFavorites", methods={"DELETE"})
+     * on supprime tous les favoris d'un utilisateur
+     */
+    public function deleteFavorites(int $id, UserRepository $userRepository, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
+    {
+        // on recupere l'utilisateur
+        $user = $userRepository->find($id);
+
+        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
+        if (!$user) {
+            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+        }
+        // on recupere tous les favoris
+        $favorites = $favoriteRepository->findAllFavoritesByUserId($id);
+
+
+        foreach ($favorites as $favorite) {
+            $em->remove($favorite);
+        }
+
+        $em->flush();
+
+        $username = $user->getUsername();
+        return $this->json("all favorites of $username  have been deleted with success", Response::HTTP_OK);
+
+
+    }
 
 }
