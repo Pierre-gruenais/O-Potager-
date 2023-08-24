@@ -3,9 +3,7 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
-use App\Entity\Garden;
 use App\Repository\FavoriteRepository;
-
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -18,7 +16,7 @@ use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+
 
 class UserController extends AbstractController
 {
@@ -153,9 +151,7 @@ class UserController extends AbstractController
         return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
     }
 
-    //! GET GARDEN USER
 
-    //! GET USERS
 
     //! GET FAVORITE USER
 
@@ -206,12 +202,8 @@ class UserController extends AbstractController
 
     }
 
-    //! DELETE FAVORITE-id USER 
 
     //! DELETE FAVORITES USER
-
-    //! DELETE FAVORITE USER
-
 
     /**
      * @Route("/api/users/{id}/favorites", name="app_api_user_deleteFavorites", methods={"DELETE"})
@@ -241,5 +233,8 @@ class UserController extends AbstractController
 
 
     }
+
+    //! GET GARDEN USER
+    //! post favorite
 
 }
