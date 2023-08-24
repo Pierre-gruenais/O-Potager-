@@ -18,6 +18,8 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class UserController extends AbstractController
 {
+
+    //! GET USERS
     /**
      * @Route("/api/users", name="app_api_users_getUsers", methods={"GET"})
      */
@@ -29,6 +31,7 @@ class UserController extends AbstractController
     }
 
 
+    //! POST USER
     /**
      * @Route("/api/users", name="app_api_users_postUsers", methods={"POST"})
      */
@@ -37,12 +40,12 @@ class UserController extends AbstractController
         // je récupere un json en brut
         $jsonContent = $request->getContent();
 
-        // ! potentiellement j'ai une erreur si le json n'est pas bon
+        // potentiellement j'ai une erreur si le json n'est pas bon
         // je transforme ce json en entité user
         try {
             $user = $serializer->deserialize($jsonContent, User::class, 'json');
         } catch (NotEncodableValueException $e) {
-            // ! je gere le cas ou il ya l'erreur
+            // je gere le cas ou il ya l'erreur
             return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
         }
 
@@ -67,7 +70,7 @@ class UserController extends AbstractController
         }
 
         $entityManager->persist($user);
-        
+
         $entityManager->flush();
 
         return $this->json([$user], Response::HTTP_CREATED, [
@@ -76,19 +79,22 @@ class UserController extends AbstractController
                 "groups" => "users"
             ]);
     }
- /**
+
+
+    //! PUT USER
+    /**
      * @Route("/api/users/{id}", name="app_api_users_putUser", methods={"PUT"})
      */
-    public function putUser(int $id,SerializerInterface $serializer, userRepository $userRepository, EntityManagerInterface $em, Request $request, ValidatorInterface $validator): JsonResponse
+    public function putUser(int $id, SerializerInterface $serializer, userRepository $userRepository, EntityManagerInterface $em, Request $request, ValidatorInterface $validator): JsonResponse
     {
         $user = $userRepository->find($id);
-        // ! potentiellement j'ai une erreur si l'utilisateur' n'existe pas
+        // potentiellement j'ai une erreur si l'utilisateur' n'existe pas
         if (!$user) {
             return $this->json(["error" => "l'utilisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
         }
 
         $jsonContent = $request->getContent();
-        // ! potentiellement j'ai une erreur si le json n'est pas bon
+        // potentiellement j'ai une erreur si le json n'est pas bon
         try {
             $updatedUser = $serializer->deserialize($jsonContent, User::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $user]);
 
@@ -107,13 +113,16 @@ class UserController extends AbstractController
 
         return $this->json($updatedUser, Response::HTTP_OK, [], ["groups" => "users"]);
     }
-     /**
+
+
+    //! DELETE USER
+    /**
      * @Route("/api/users/{id}", name="app_api_users_deleteUser", methods={"delete"})
      */
     public function deleteUser(int $id, userRepository $userRepository, EntityManagerInterface $em): JsonResponse
     {
         $user = $userRepository->find($id);
-        // ! potentiellement j'ai une erreur si l'utilisateur' n'existe pas
+        // potentiellement j'ai une erreur si l'utilisateur' n'existe pas
         try {
             $em->remove($user);
         } catch (ORMInvalidArgumentException $e) {
@@ -124,6 +133,8 @@ class UserController extends AbstractController
         return $this->json("the user has been deleted with success", Response::HTTP_OK);
     }
 
+
+    //! GET USER
     /**
      * @Route("/api/users/{id}", name="app_api_users_getUsersById", methods={"GET"})
      */
@@ -137,5 +148,17 @@ class UserController extends AbstractController
         }
         return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
     }
+
+    //! GET GARDEN USER
+
+    //! GET USERS
+
+    //! GET FAVORITE-id USER
+
+    //! POST FAVORITE USER
+
+    //! DELETE FAVORITE-id USER 
+
+    //! DELETE FAVORITES USER
 
 }
