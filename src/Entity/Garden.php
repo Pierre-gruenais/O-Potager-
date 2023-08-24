@@ -127,6 +127,7 @@ class Garden
     {
         $this->pictures = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+       
     }
 
     public function getId(): ?int

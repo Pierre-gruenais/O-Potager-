@@ -99,6 +99,7 @@ class User
     {
         $this->gardens = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
