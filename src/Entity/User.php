@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=UserRepository::class)
@@ -17,6 +18,7 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"users"})
      */
     private $id;
 
@@ -24,6 +26,7 @@ class User
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
+     * @Groups({"users"})
      */
     private $username;
 
@@ -31,6 +34,7 @@ class User
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
+     * @Groups({"users"})
      */
     private $password;
 
@@ -39,6 +43,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Email
      * @Assert\Length(max=255)
+     * @Groups({"users"})
      */
     private $email;
 
@@ -46,6 +51,7 @@ class User
      * @ORM\Column(type="string", length=64, nullable=true)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
+     * @Groups({"users"})
      */
     private $phone;
 
@@ -53,6 +59,7 @@ class User
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"users"})
      */
     private $role;
 
@@ -60,26 +67,31 @@ class User
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank
      * @Assert\Url
+     * @Groups({"users"})
      */
     private $avatar;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"users"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"users"})
      */
     private $updatedAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Garden::class, mappedBy="user")
+     * @Groups({"userWithRelations"})
      */
     private $gardens;
 
     /**
      * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true)
+     * @Groups({"userWithRelations"})
      */
     private $favorites;
 

@@ -20,5 +20,17 @@ class UserController extends AbstractController
         return $this->json($users, Response::HTTP_OK, [], ["groups" => "users"]);
     }
     
-   
+   /**
+     * @Route("/api/users/{id}", name="app_api_user_getUsersById")
+     */
+    public function getUsersById(int $id, UserRepository $userRepository): JsonResponse
+    {
+
+        $user = $userRepository->find($id);
+            // ! potentiellement j'ai une erreur si le film n'existe pas
+        if (!$user) {
+            return $this->json(["error" => "l'utisateur n'esxiste pas"], Response::HTTP_BAD_REQUEST);
+        }
+        return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
+    }
 }
