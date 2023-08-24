@@ -19,6 +19,7 @@ class User
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({"gardensWithRelations"})
+     * @Groups({"users"})
      */
     private $id;
 
@@ -27,6 +28,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Length(max=64)
      * @Groups({"gardensWithRelations"})
+     * @Groups({"users"})
      */
     private $username;
 
@@ -34,6 +36,7 @@ class User
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
+     * @Groups({"users"})
      */
     private $password;
 
@@ -43,6 +46,7 @@ class User
      * @Assert\Email
      * @Assert\Length(max=255)
      * @Groups({"gardensWithRelations"})
+     * @Groups({"users"})
      */
     private $email;
 
@@ -51,6 +55,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Length(max=64)
      * @Groups({"gardensWithRelations"})
+     * @Groups({"users"})
      */
     private $phone;
 
@@ -58,6 +63,7 @@ class User
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"users"})
      */
     private $role;
 
@@ -66,26 +72,31 @@ class User
      * @Assert\NotBlank
      * @Assert\Url
      * @Groups({"gardensWithRelations"})
+     * @Groups({"users"})
      */
     private $avatar;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"users"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"users"})
      */
     private $updatedAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Garden::class, mappedBy="user")
+     * @Groups({"userWithRelations"})
      */
     private $gardens;
 
     /**
      * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true)
+     * @Groups({"userWithRelations"})
      */
     private $favorites;
 
@@ -93,6 +104,7 @@ class User
     {
         $this->gardens = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
