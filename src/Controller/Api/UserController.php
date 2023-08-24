@@ -3,6 +3,8 @@
 namespace App\Controller\Api;
 
 use App\Entity\User;
+use App\Repository\FavoriteRepository;
+use App\Repository\GardenRepository;
 use App\Repository\UserRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -170,14 +172,37 @@ class UserController extends AbstractController
         // on recupere les favoris de l'utisateur
         $favorites = $user->getFavorites();
         // si l'utilisateur n'a pas de favoris on retourne une erreur
-        if (($favorites->getValues()) === []) {
+        if ($favorites->isEmpty()) {
             return $this->json(["error" => "l'utisateur n'a pas de favoris"], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json($favorites, Response::HTTP_OK, [], ["groups" => "userWithRelations"]);
     }
 
-//! POST FAVORITE USER
+    //! DELETE FAVORITE USER
+
+
+    /**
+     * @Route("/api/users/favorites/{id}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
+     * on supprime un favoris d'un utilisateur
+     */
+    public function deleteFavoriteById(int $id,FavoriteRepository $favoriteRepository,EntityManagerInterface $em): JsonResponse
+    {
+        //  potentiellement j'ai une erreur si le favoris n'existe pas
+        // on recupere le favoris
+        $favorite = $favoriteRepository->find($id);
+        
+        try {
+            $em->remove($favorite);
+        } catch (ORMInvalidArgumentException $e) {
+
+            return $this->json(["error" => "le favoris n'existe pas"], Response::HTTP_BAD_REQUEST);
+        }
+        $em->flush();
+        return $this->json("the favorite has been deleted with success", Response::HTTP_OK);
+
+
+    }
 
 //! DELETE FAVORITE-id USER 
 

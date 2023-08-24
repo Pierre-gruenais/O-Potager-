@@ -15,6 +15,7 @@ class Favorite
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"userWithRelations"})
      */
     private $id;
 
