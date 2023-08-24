@@ -19,6 +19,7 @@ class User
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
      * @Groups({"gardensWithRelations"})
+     * @Groups({"userWithRelations"})
      * @Groups({"users"})
      */
     private $id;
@@ -28,6 +29,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Length(max=64)
      * @Groups({"gardensWithRelations"})
+     * @Groups({"userWithRelations"})
      * @Groups({"users"})
      */
     private $username;
@@ -46,6 +48,7 @@ class User
      * @Assert\Email
      * @Assert\Length(max=255)
      * @Groups({"gardensWithRelations"})
+     * @Groups({"userWithRelations"})
      * @Groups({"users"})
      */
     private $email;
@@ -72,6 +75,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Url
      * @Groups({"gardensWithRelations"})
+     * @Groups({"userWithRelations"})
      * @Groups({"users"})
      */
     private $avatar;
@@ -96,7 +100,7 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true)
-     * @Groups({"userWithRelations"})
+    
      */
     private $favorites;
 

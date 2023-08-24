@@ -30,7 +30,7 @@ class NominatimApiService
             // url de l'api
             'https://nominatim.openstreetmap.org/search',
             [
-                // le paramètres ici est la recherche par ville
+                // le paramètre ici est la recherche par ville
                 "query" => [
                     "q" => $city
                 ]
