@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=GardenRepository::class)
@@ -17,6 +18,7 @@ class Garden
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"gardensWithRelations"})
      */
     private $id;
 
@@ -24,6 +26,7 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations"}) 
      */
     private $title;
 
@@ -31,6 +34,7 @@ class Garden
      * @ORM\Column(type="string", length=1000)
      * @Assert\NotBlank
      * @Assert\Length(max=1000)
+     * @Groups({"gardensWithRelations"})
      */
     private $description;
 
@@ -38,12 +42,14 @@ class Garden
      * @ORM\Column(type="string", length=240)
      * @Assert\NotBlank
      * @Assert\Length(max=240)
+     * @Groups({"gardensWithRelations"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
+     * @Groups({"gardensWithRelations"})
      */
     private $postalCode;
 
@@ -51,52 +57,61 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $water;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $tool;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $shed;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $cultivation;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
+     * @Groups({"gardensWithRelations"})
      */
     private $surface;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $phoneAccess;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"gardensWithRelations"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"gardensWithRelations"})
      */
     private $updatedAt;
 
@@ -104,17 +119,20 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations"})
      */
     private $state;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens")
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"gardensWithRelations"})
      */
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", orphanRemoval=true, cascade={"persist"})
+     * @Groups({"gardensWithRelations"})
      */
     private $pictures;
 
@@ -127,6 +145,7 @@ class Garden
     {
         $this->pictures = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
