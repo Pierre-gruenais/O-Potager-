@@ -4,6 +4,7 @@ namespace App\Controller\Api;
 
 use App\Entity\Garden;
 use App\Repository\GardenRepository;
+use App\Service\NominatimApiService;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -18,6 +19,13 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 class GardenController extends AbstractController
 {
+    private $nominatimApi;
+
+    public function __construct(NominatimApiService $nominatimApi)
+    {
+        $this->nominatimApi = $nominatimApi;
+    }
+
     /**
      * @Route("/api/gardens", name="app_api_garden_getGardens", methods={"GET"})
      */
@@ -112,7 +120,7 @@ class GardenController extends AbstractController
     
 
     /**
-     * @Route("/api/gardens/{id}", name="app_api_garden_deleteGardenById", methods={"GET", "DELETE"})
+     * @Route("/api/gardens/{id}", name="app_api_garden_deleteGardenById", methods={"DELETE"})
      */
     public function deleteGardenById(Garden $garden, GardenRepository $gardenRepository, EntityManagerInterface $em): JsonResponse
     {
@@ -125,5 +133,19 @@ class GardenController extends AbstractController
         }
         
         return $this->json("Le jardin a bien été supprimé", Response::HTTP_NO_CONTENT);
+    }
+
+    /**
+     * @Route("/api/search/gardens", name="app_api_garden_getGardensBySearch", methods={"GET"})
+     */
+    public function getGardensBySearch(Request $request): JsonResponse
+    {
+        $jsonContent = $request->query->get('city');
+        
+        $dataApi = $this->nominatimApi->getCoordinates($jsonContent);
+
+        $cityLat = $dataApi['lat'];
+        $cityLon = $dataApi['lon'];
+
     }
 }
