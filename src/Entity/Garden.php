@@ -124,28 +124,27 @@ class Garden
     private $state;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens", cascade={"persist"})
-     * @ORM\JoinColumn(nullable=false)
-     * @Groups({"gardensWithRelations"})
-     */
-    private $user;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", orphanRemoval=true, cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", cascade={"persist"}, orphanRemoval=true)
      * @Groups({"gardensWithRelations"})
      */
     private $pictures;
 
     /**
-     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="Garden", orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens", cascade={"persist"})
+     * @Groups({"gardensWithRelations"})
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="garden", cascade={"persist"}, orphanRemoval=true)
      */
     private $favorites;
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
         $this->pictures = new ArrayCollection();
         $this->favorites = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -321,18 +320,6 @@ class Garden
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Picture>
      */
@@ -359,6 +346,18 @@ class Garden
                 $picture->setGarden(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
 
         return $this;
     }

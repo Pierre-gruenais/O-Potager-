@@ -5,12 +5,14 @@ namespace App\Controller\Api;
 use App\Entity\Garden;
 use App\Repository\GardenRepository;
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Serializer\Exception\NotEncodableValueException;
+use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
@@ -72,5 +74,56 @@ class GardenController extends AbstractController
         ], [
             "groups" => "gardensWithRelations"
         ]);
+    }
+
+    /**
+     * @Route("/api/gardens/{id}", name="app_api_garden_putGardenById", methods={"PUT"})
+     */
+    public function putGardenById(Garden $garden, GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
+    {
+        $garden = $gardenRepository->find($garden);
+
+        if (!$garden) {
+            return $this->json(["error" => "le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
+        }
+
+        $jsonContent = $request->getContent();
+
+        try {
+            $updatedGarden = $serializer->deserialize($jsonContent, Garden::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $garden]);
+
+        } catch (NotEncodableValueException $e) {
+
+            return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
+        }
+
+
+        $errors = $validator->validate($updatedGarden);
+        
+        if (count($errors) > 0) {
+            return $this->json($errors, 400);
+        }
+
+        $em->persist($updatedGarden);
+        $em->flush();
+
+        return $this->json($updatedGarden, Response::HTTP_OK, [], ["groups" => "gardensWithRelations"]);
+    }
+    
+
+    /**
+     * @Route("/api/gardens/{id}", name="app_api_garden_deleteGardenById", methods={"GET", "DELETE"})
+     */
+    public function deleteGardenById(Garden $garden, GardenRepository $gardenRepository, EntityManagerInterface $em): JsonResponse
+    {
+        try {
+            $gardenRepository->remove($garden, true);
+            
+        } catch (ORMInvalidArgumentException $e) {
+
+            return $this->json(["error" => "le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
+        }
+        
+        return $this->json("Le jardin a bien été supprimé", Response::HTTP_NO_CONTENT);
     }
 }

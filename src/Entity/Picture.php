@@ -40,7 +40,7 @@ class Picture
     private $updatedAt;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Garden::class, inversedBy="pictures", cascade={"persist"})
+     * @ORM\ManyToOne(targetEntity=Garden::class, inversedBy="pictures")
      * @ORM\JoinColumn(nullable=false)
      */
     private $garden;

@@ -18,8 +18,7 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations", "users"})
      */
     private $id;
 
@@ -27,8 +26,7 @@ class User
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations", "users"})
      */
     private $username;
 
@@ -45,8 +43,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Email
      * @Assert\Length(max=255)
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations", "users"})
      */
     private $email;
 
@@ -54,8 +51,7 @@ class User
      * @ORM\Column(type="string", length=64, nullable=true)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations", "users"})
      */
     private $phone;
 
@@ -71,8 +67,7 @@ class User
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank
      * @Assert\Url
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations", "users"})
      */
     private $avatar;
 
@@ -89,22 +84,20 @@ class User
     private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=Garden::class, mappedBy="user")
-     * @Groups({"userWithRelations"})
+     * @ORM\OneToMany(targetEntity=Garden::class, mappedBy="user", orphanRemoval=true)
      */
     private $gardens;
 
     /**
      * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true)
-     * @Groups({"userWithRelations"})
      */
     private $favorites;
 
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
         $this->gardens = new ArrayCollection();
         $this->favorites = new ArrayCollection();
-        $this->createdAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int
@@ -267,4 +260,5 @@ class User
 
         return $this;
     }
+
 }
