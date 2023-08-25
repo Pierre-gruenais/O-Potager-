@@ -66,13 +66,13 @@ class AppFixtures extends Fixture
         // Je crée un tableau vide
         $gardenList = [];
         for ($i = 0; $i < 20; $i++) {
+            $city = $faker->cities();
             // J'instancie un nouvel objet garden
             $garden = new Garden();
             $garden->setTitle($faker->text(100));
             $garden->setDescription($faker->text(240));
             $garden->setAddress($faker->streetAddress());
             $garden->setPostalCode($faker->numberBetween(1000, 95000));
-            $city = $faker->city();
             $garden->setCity($city);
             $garden->setWater($faker->boolean());
             $garden->setTool($faker->boolean());
@@ -83,8 +83,8 @@ class AppFixtures extends Fixture
             $garden->setPhoneAccess($faker->boolean());
             $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
             $garden->setUser($userList[array_rand($userList)]);
-            $garden->setLat(($this->nominatimApiService->getCoordinates($city))["lat"]);
-            $garden->setLon(($this->nominatimApiService->getCoordinates($city))["lon"]);
+            $garden->setLat(($this->nominatimApiService->getCoordinates($city))[ "lat" ]);
+            $garden->setLon(($this->nominatimApiService->getCoordinates($city))[ "lon" ]);
             $gardenList[] = $garden;
 
             $manager->persist($garden);
@@ -107,7 +107,7 @@ class AppFixtures extends Fixture
 
             $picture = new Picture();
             // utilisation de l'api Unsplash pour generer des photos de garden
-            $picture->setName($this->unsplashApi->fetchPhotosRandom("garden"));
+            // $picture->setName($this->unsplashApi->fetchPhotosRandom("garden"));
             $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
             $picture->setGarden($gardenList[array_rand($gardenList)]);
 
