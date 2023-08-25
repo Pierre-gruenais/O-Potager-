@@ -142,11 +142,15 @@ class Garden
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\NotBlank
+     * @Groups({"gardensWithRelations"})
      */
     private $lat;
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\NotBlank
+     * @Groups({"gardensWithRelations"})
      */
     private $lon;
 

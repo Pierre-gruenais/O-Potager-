@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Garden;
 use App\Repository\GardenRepository;
 use App\Service\NominatimApiService;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -61,6 +62,11 @@ class GardenController extends AbstractController
         
         }
 
+        $cityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " . $garden->getPostalCode() . " " .$garden->getCity());
+
+        $garden->setLat($cityApi['lat']);
+        $garden->setLon($cityApi['lon']);
+        
         $errors = $validator->validate($garden);
 
         if (count($errors) > 0) {
@@ -100,11 +106,18 @@ class GardenController extends AbstractController
         try {
             $updatedGarden = $serializer->deserialize($jsonContent, Garden::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $garden]);
 
+
         } catch (NotEncodableValueException $e) {
 
             return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
         }
 
+        $cityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " .$garden->getCity());
+
+        $garden->setLat($cityApi['lat']);
+        $garden->setLon($cityApi['lon']);
+
+        $garden->setUpdatedAt(new DateTimeImmutable());
 
         $errors = $validator->validate($updatedGarden);
         
@@ -140,9 +153,7 @@ class GardenController extends AbstractController
      */
     public function getGardensBySearch(Request $request, GardenRepository $gardenRepository): JsonResponse
     {
-        $dataCity = $request->query->get('city');
-        
-        $dataApi = $this->nominatimApi->getCoordinates($dataCity);
+        $dataApi = $this->nominatimApi->getCoordinates($request->query->get('city'));
 
         $cityLat = $dataApi['lat'];
         $cityLon = $dataApi['lon'];
@@ -151,6 +162,6 @@ class GardenController extends AbstractController
 
         $gardens = $gardenRepository->findGardenByCoordonates($cityLat, $cityLon, $dataDist);
 
-        return $this->json($gardens, Response::HTTP_OK, [], ["groups" => "gardensWithRelations"]);
+        return $this->json($gardens, Response::HTTP_OK);
     }
 }
