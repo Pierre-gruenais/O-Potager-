@@ -95,7 +95,6 @@ class User
 
     /**
      * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true)
-     * @Groups({"userWithRelations"})
      */
     private $favorites;
 

@@ -242,18 +242,20 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/favorites/{id}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
+     * @Route("/api/users/{id}/favorites/{favoriteId}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
      * on supprime un favoris d'un utilisateur
      */
-    public function deleteFavoriteById(int $id, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
+    public function deleteFavoriteById(int $id,int $favoriteId, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
     {
         //  potentiellement j'ai une erreur si le favoris n'existe pas
         // on recupere le favoris
-        $favorite = $favoriteRepository->find($id);
+        $favorites = $favoriteRepository->findOneFavoritesByUserId($id,$favoriteId);
+        
 
         try {
-
-            $em->remove($favorite);
+            foreach ($favorites as $favorite) {
+                $em->remove($favorite);
+            }
         } catch (ORMInvalidArgumentException $e) {
 
             return $this->json(["error" => "le favoris n'existe pas"], Response::HTTP_BAD_REQUEST);
