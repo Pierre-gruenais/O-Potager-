@@ -138,14 +138,19 @@ class GardenController extends AbstractController
     /**
      * @Route("/api/search/gardens", name="app_api_garden_getGardensBySearch", methods={"GET"})
      */
-    public function getGardensBySearch(Request $request): JsonResponse
+    public function getGardensBySearch(Request $request, GardenRepository $gardenRepository): JsonResponse
     {
-        $jsonContent = $request->query->get('city');
+        $dataCity = $request->query->get('city');
         
-        $dataApi = $this->nominatimApi->getCoordinates($jsonContent);
+        $dataApi = $this->nominatimApi->getCoordinates($dataCity);
 
         $cityLat = $dataApi['lat'];
         $cityLon = $dataApi['lon'];
 
+        $dataDist = $request->query->get('dist');
+
+        $gardens = $gardenRepository->findGardenByCoordonates($cityLat, $cityLon, $dataDist);
+
+        return $this->json($gardens, Response::HTTP_OK, [], ["groups" => "gardensWithRelations"]);
     }
 }

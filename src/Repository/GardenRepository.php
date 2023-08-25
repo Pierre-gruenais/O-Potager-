@@ -66,8 +66,20 @@ class GardenRepository extends ServiceEntityRepository
 
     public function findGardenByCoordonates(float $lat, float $lon, int $distance = 10)
     {
-    
+        $formule = "(6366*acos(cos(radians($lat))*cos(radians(`lat`))*cos(radians(`lon`) - radians($lon))+sin(radians($lat))*sin(radians(`lat`))))";
 
+        $conn = $this->getEntityManager()->getConnection();
 
+        $sql = '
+            SELECT *,' .$formule .' AS dist
+            FROM garden
+            WHERE ' . $formule . '<=' . $distance . '
+            ORDER BY dist ASC
+            ';
+        $stmt = $conn->prepare($sql);
+        $resultSet = $stmt->executeQuery();
+
+        // returns an array of arrays (i.e. a raw data set)
+        return $resultSet->fetchAllAssociative();
     }
 }
