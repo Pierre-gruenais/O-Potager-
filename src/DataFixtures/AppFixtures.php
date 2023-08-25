@@ -15,16 +15,19 @@ use App\Service\UnsplashApiService;
 use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use App\DataFixtures\Provider\AppProvider;
+use App\Service\NominatimApiService;
 
 class AppFixtures extends Fixture
 {
 
 
     private $unsplashApi;
+    private $nominatimApiService;
 
-    public function __construct(UnsplashApiService $unsplashApi)
+    public function __construct(UnsplashApiService $unsplashApi, NominatimApiService $nominatimApiService)
     {
         $this->unsplashApi = $unsplashApi;
+        $this->nominatimApiService = $nominatimApiService;
     }
 
     public function load(ObjectManager $manager): void
@@ -79,7 +82,8 @@ class AppFixtures extends Fixture
             $garden->setPhoneAccess($faker->boolean());
             $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
             $garden->setUser($userList[array_rand($userList)]);
-
+            $garden->setLat(($this->nominatimApiService->getCoordinates($faker->city()))["lat"]);
+            $garden->setLon(($this->nominatimApiService->getCoordinates($faker->city()))["lon"]);
             $gardenList[] = $garden;
 
             $manager->persist($garden);
