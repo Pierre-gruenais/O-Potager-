@@ -190,7 +190,11 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/{id}/favorites", name="app_api_user_postFavorite", methods={"POST"})
+     * @Route("/api/users/{id}/favorites", nam        $sql = '
+            SELECT *,' .$formule .' AS dist
+            FROM garden
+            WHERE ' . $formule . '<=' . $distance . '
+            ORDER BY dist ASCe="app_api_user_postFavorite", methods={"POST"})
      */
     public function postFavorite(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
     {

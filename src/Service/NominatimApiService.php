@@ -32,14 +32,14 @@ class NominatimApiService
             [
                 // le paramètre ici est la recherche par ville
                 "query" => [
-                    "q" => $city
+                    "q" => $city,
+                    "format" => "jsonv2"
                 ]
             ]
         );
-
+        
         // je recupere toutes les donnees coordinates 
         $cityAllCoordinates = $response->toArray();
-        // dd($cityAllCoordinates);
         // je cree un tableau cityCoordinates pour y recuperer uniquement la latitude et longitude
         $cityCoordinates = [];
         $cityCoordinates[ "lat" ] = $cityAllCoordinates[ 0 ][ "lat" ];
