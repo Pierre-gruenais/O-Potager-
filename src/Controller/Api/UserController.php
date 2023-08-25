@@ -186,60 +186,60 @@ class UserController extends AbstractController
     }
 
 
-    //! POST FAVORITE
+    // //! POST FAVORITE
 
 
-    /**
-     * @Route("/api/users/{id}/favorites", nam        $sql = '
-            SELECT *,' .$formule .' AS dist
-            FROM garden
-            WHERE ' . $formule . '<=' . $distance . '
-            ORDER BY dist ASCe="app_api_user_postFavorite", methods={"POST"})
-     */
-    public function postFavorite(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
-    {
-        // je récupere un json en brut
-        $jsonContent = $request->getContent();
-        //! verifier si l'utilisateur existe deja
-        // potentiellement j'ai une erreur si le json n'est pas bon
-        // je transforme ce json en entité user
-        try {
-            $user = $serializer->deserialize($jsonContent, User::class, 'json');
-        } catch (NotEncodableValueException $e) {
-            // je gere le cas ou il ya l'erreur
-            return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
-        }
+    // /**
+    //  * @Route("/api/users/{id}/favorites", nam        $sql = '
+    //         SELECT *,' .$formule .' AS dist
+    //         FROM garden
+    //         WHERE ' . $formule . '<=' . $distance . '
+    //         ORDER BY dist ASCe="app_api_user_postFavorite", methods={"POST"})
+    //  */
+    // public function postFavorite(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
+    // {
+    //     // je récupere un json en brut
+    //     $jsonContent = $request->getContent();
+    //     //! verifier si l'utilisateur existe deja
+    //     // potentiellement j'ai une erreur si le json n'est pas bon
+    //     // je transforme ce json en entité user
+    //     try {
+    //         $user = $serializer->deserialize($jsonContent, User::class, 'json');
+    //     } catch (NotEncodableValueException $e) {
+    //         // je gere le cas ou il ya l'erreur
+    //         return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
+    //     }
 
 
 
-        // je detecte les erreurs sur mon entité avant de la persister
-        $errors = $validator->validate($user);
+    //     // je detecte les erreurs sur mon entité avant de la persister
+    //     $errors = $validator->validate($user);
 
-        // on renvoi un json avec les erreurs
-        if (count($errors) > 0) {
+    //     // on renvoi un json avec les erreurs
+    //     if (count($errors) > 0) {
 
-            // je crée un nouveau tableau d'erreur
-            $dataErrors = [];
+    //         // je crée un nouveau tableau d'erreur
+    //         $dataErrors = [];
 
-            foreach ($errors as $error) {
-                // j'injecte dans le tableau à l'index de l'input, les messages d'erreurs qui concernent l'erreur en question
-                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-            }
+    //         foreach ($errors as $error) {
+    //             // j'injecte dans le tableau à l'index de l'input, les messages d'erreurs qui concernent l'erreur en question
+    //             $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+    //         }
 
-            // je retourne le json avec mes erreurs
-            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+    //         // je retourne le json avec mes erreurs
+    //         return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+    //     }
 
-        $entityManager->persist($user);
+    //     $entityManager->persist($user);
 
-        $entityManager->flush();
+    //     $entityManager->flush();
 
-        return $this->json([$user], Response::HTTP_CREATED, [
-            "Location" => $this->generateUrl("app_api_user_getUsersById", ["id" => $user->getId()])
-        ], [
-                "groups" => "users"
-            ]);
-    }
+    //     return $this->json([$user], Response::HTTP_CREATED, [
+    //         "Location" => $this->generateUrl("app_api_user_getUsersById", ["id" => $user->getId()])
+    //     ], [
+    //             "groups" => "users"
+    //         ]);
+    // }
 
 
     //! DELETE FAVORITE USER

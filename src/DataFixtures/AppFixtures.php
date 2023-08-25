@@ -72,7 +72,8 @@ class AppFixtures extends Fixture
             $garden->setDescription($faker->text(240));
             $garden->setAddress($faker->streetAddress());
             $garden->setPostalCode($faker->numberBetween(1000, 95000));
-            $garden->setCity($faker->city());
+            $city = $faker->city();
+            $garden->setCity($city);
             $garden->setWater($faker->boolean());
             $garden->setTool($faker->boolean());
             $garden->setShed($faker->boolean());
@@ -82,8 +83,8 @@ class AppFixtures extends Fixture
             $garden->setPhoneAccess($faker->boolean());
             $garden->setCreatedAt(new DateTimeImmutable($faker->date()));
             $garden->setUser($userList[array_rand($userList)]);
-            $garden->setLat(($this->nominatimApiService->getCoordinates($faker->city()))["lat"]);
-            $garden->setLon(($this->nominatimApiService->getCoordinates($faker->city()))["lon"]);
+            $garden->setLat(($this->nominatimApiService->getCoordinates($city))["lat"]);
+            $garden->setLon(($this->nominatimApiService->getCoordinates($city))["lon"]);
             $gardenList[] = $garden;
 
             $manager->persist($garden);
