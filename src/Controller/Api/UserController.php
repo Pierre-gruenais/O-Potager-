@@ -33,6 +33,24 @@ class UserController extends AbstractController
     }
 
 
+
+     //! GET USER
+    /**
+     * @Route("/api/users/{id}", name="app_api_user_getUsersById", methods={"GET"})
+     */
+    public function getUsersById(int $id, UserRepository $userRepository): JsonResponse
+    {
+
+        $user = $userRepository->find($id);
+        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
+        if (!$user) {
+            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+        }
+        return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
+    }
+
+
+
     //! POST USER
     /**
      * @Route("/api/users", name="app_api_user_postUsers", methods={"POST"})
@@ -136,30 +154,17 @@ class UserController extends AbstractController
     }
 
 
-    //! GET USER
-    /**
-     * @Route("/api/users/{id}", name="app_api_user_getUsersById", methods={"GET"})
-     */
-    public function getUsersById(int $id, UserRepository $userRepository): JsonResponse
-    {
-
-        $user = $userRepository->find($id);
-        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
-        if (!$user) {
-            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
-        }
-        return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
-    }
+   
 
 
 
-    //! GET FAVORITE USER
+    //! GET FAVORITES USER
 
     /**
      * @Route("/api/users/{id}/favorites", name="app_api_user_getFavoriteUser", methods={"GET"})
      * on recupere tous les favoris d'un utilisateur
      */
-    public function getFavoriteUser(int $id, UserRepository $userRepository): JsonResponse
+    public function getFavoritesUser(int $id, UserRepository $userRepository): JsonResponse
     {
         // on recupere l'utilisateur
         $user = $userRepository->find($id);
@@ -176,6 +181,13 @@ class UserController extends AbstractController
 
         return $this->json($favorites, Response::HTTP_OK, [], ["groups" => "userWithRelations"]);
     }
+
+
+    //! POST FAVORITE
+
+
+
+
 
     //! DELETE FAVORITE USER
 
@@ -234,7 +246,7 @@ class UserController extends AbstractController
 
     }
 
-    //! GET GARDEN USER
+    //! GET GARDENS USER
 
 
     /**
@@ -250,11 +262,11 @@ class UserController extends AbstractController
             return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
         }
         $gardens = $user->getGardens();
-        
+
         return $this->json($gardens, Response::HTTP_OK, [], ["groups" => "gardensUser"]);
     }
 
 
-//! post favorite
+    
 
 }
