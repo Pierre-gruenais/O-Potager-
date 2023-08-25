@@ -15,7 +15,7 @@ class Favorite
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"userWithRelations"})
+     * @Groups({"userfavorites"})
      */
     private $id;
 
@@ -29,6 +29,7 @@ class Favorite
     /**
      * @ORM\ManyToOne(targetEntity=Garden::class, inversedBy="favorites")
      * @ORM\JoinColumn(nullable=false)
+     * @Groups({"userfavorites"})
      */
     private $garden;
 

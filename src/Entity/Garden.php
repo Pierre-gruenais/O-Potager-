@@ -18,7 +18,7 @@ class Garden
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $id;
 
@@ -26,7 +26,7 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $title;
 
@@ -34,7 +34,7 @@ class Garden
      * @ORM\Column(type="string", length=1000)
      * @Assert\NotBlank
      * @Assert\Length(max=1000)
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $description;
 
@@ -42,14 +42,14 @@ class Garden
      * @ORM\Column(type="string", length=240)
      * @Assert\NotBlank
      * @Assert\Length(max=240)
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $address;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      * @Assert\NotBlank
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $postalCode;
 
@@ -57,42 +57,42 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="boolean")
      * @Assert\NotNull
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $water;
 
     /**
      * @ORM\Column(type="boolean")
      * @Assert\NotNull
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $tool;
 
     /**
      * @ORM\Column(type="boolean")
      * @Assert\NotNull
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $shed;
 
     /**
      * @ORM\Column(type="boolean")
      * @Assert\NotNull
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $cultivation;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $surface;
 
@@ -105,7 +105,7 @@ class Garden
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $createdAt;
 
@@ -119,13 +119,13 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $state;
 
     /**
      * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", cascade={"persist"}, orphanRemoval=true)
-     * @Groups({"gardensWithRelations"})
+     * @Groups({"gardensWithRelations","userfavorites"})
      */
     private $pictures;
 
@@ -142,11 +142,13 @@ class Garden
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"gardensWithRelations","userfavorites"})
      */
     private $lat;
 
     /**
      * @ORM\Column(type="float")
+     * @Groups({"gardensWithRelations","userfavorites"})
      */
     private $lon;
 

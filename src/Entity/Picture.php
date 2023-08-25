@@ -25,7 +25,7 @@ class Picture
      * @Assert\NotBlank
      * @Assert\Url
      * @Assert\Length(max=255)
-     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser","userfavorites"})
      */
     private $name;
 

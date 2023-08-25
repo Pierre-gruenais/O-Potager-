@@ -94,7 +94,7 @@ class User
     private $gardens;
 
     /**
-     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true,cascade={"persist"})
      */
     private $favorites;
 
