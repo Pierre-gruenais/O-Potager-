@@ -16,7 +16,7 @@ class Picture
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"gardensWithRelations","userWithRelations"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
      */
     private $id;
 
@@ -25,7 +25,7 @@ class Picture
      * @Assert\NotBlank
      * @Assert\Url
      * @Assert\Length(max=255)
-     * @Groups({"gardensWithRelations","userWithRelations"})
+     * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
      */
     private $name;
 
