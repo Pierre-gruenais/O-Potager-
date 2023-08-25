@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Repository\PictureRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=PictureRepository::class)
@@ -15,6 +16,7 @@ class Picture
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"gardensWithRelations"})
      */
     private $id;
 
@@ -23,6 +25,7 @@ class Picture
      * @Assert\NotBlank
      * @Assert\Url
      * @Assert\Length(max=255)
+     * @Groups({"gardensWithRelations"})
      */
     private $name;
 
@@ -41,6 +44,12 @@ class Picture
      * @ORM\JoinColumn(nullable=false)
      */
     private $garden;
+
+
+    public function __construct()
+    {
+        $this->createdAt = new \DateTimeImmutable();
+    }
 
     public function getId(): ?int
     {

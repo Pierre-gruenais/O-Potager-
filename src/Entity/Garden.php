@@ -18,7 +18,7 @@ class Garden
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"gardens"})
+     * @Groups({"gardensWithRelations"})
      */
     private $id;
 
@@ -26,7 +26,7 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
-     * @Groups({"gardens"})
+     * @Groups({"gardensWithRelations"}) 
      */
     private $title;
 
@@ -34,7 +34,7 @@ class Garden
      * @ORM\Column(type="string", length=1000)
      * @Assert\NotBlank
      * @Assert\Length(max=1000)
-     * @Groups({"gardens"})
+     * @Groups({"gardensWithRelations"})
      */
     private $description;
 
@@ -42,12 +42,14 @@ class Garden
      * @ORM\Column(type="string", length=240)
      * @Assert\NotBlank
      * @Assert\Length(max=240)
+     * @Groups({"gardensWithRelations"})
      */
     private $address;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
+     * @Groups({"gardensWithRelations"})
      */
     private $postalCode;
 
@@ -55,52 +57,61 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $water;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $tool;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $shed;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $cultivation;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
+     * @Groups({"gardensWithRelations"})
      */
     private $surface;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $phoneAccess;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"gardensWithRelations"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"gardensWithRelations"})
      */
     private $updatedAt;
 
@@ -108,27 +119,40 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations"})
      */
     private $state;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", cascade={"persist"}, orphanRemoval=true)
+     * @Groups({"gardensWithRelations"})
      */
     private $pictures;
 
     /**
-     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="Garden", orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens", cascade={"persist"})
+     * @Groups({"gardensWithRelations"})
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="garden", cascade={"persist"}, orphanRemoval=true)
      */
     private $favorites;
 
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $lat;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $lon;
+
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
         $this->pictures = new ArrayCollection();
         $this->favorites = new ArrayCollection();
     }
@@ -306,18 +330,6 @@ class Garden
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Picture>
      */
@@ -348,6 +360,18 @@ class Garden
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Favorite>
      */
@@ -374,6 +398,30 @@ class Garden
                 $favorite->setGarden(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(float $lat): self
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getLon(): ?float
+    {
+        return $this->lon;
+    }
+
+    public function setLon(float $lon): self
+    {
+        $this->lon = $lon;
 
         return $this;
     }

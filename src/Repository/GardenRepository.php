@@ -63,4 +63,11 @@ class GardenRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
+
+    public function findGardenByCoordonates(float $lat, float $lon, int $distance = 10)
+    {
+    
+
+
+    }
 }
