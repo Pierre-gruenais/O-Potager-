@@ -131,7 +131,7 @@ class Garden
     private $user;
 
     /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", orphanRemoval=true, cascade={"persist"})
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", orphanRemoval=true)
      * @Groups({"gardensWithRelations","userWithRelations","gardensUser"})
      */
     private $pictures;

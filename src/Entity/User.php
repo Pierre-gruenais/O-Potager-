@@ -93,7 +93,7 @@ class User
     private $updatedAt;
 
     /**
-     * @ORM\OneToMany(targetEntity=Garden::class, mappedBy="user")
+     * @ORM\OneToMany(targetEntity=Garden::class, mappedBy="user", orphanRemoval=true)
      * @Groups({"userWithRelations"})
      */
     private $gardens;
