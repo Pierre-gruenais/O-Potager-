@@ -235,6 +235,26 @@ class UserController extends AbstractController
     }
 
     //! GET GARDEN USER
-    //! post favorite
+
+
+    /**
+     * @Route("/api/users/{id}/gardens", name="app_api_user_getGardensUser", methods={"GET"})
+     * récupérer tous les jardins d'un utilisateur
+     */
+    public function getGardensUser(int $id, UserRepository $userRepository): JsonResponse
+    {
+
+        $user = $userRepository->find($id);
+        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
+        if (!$user) {
+            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+        }
+        $gardens = $user->getGardens();
+        
+        return $this->json($gardens, Response::HTTP_OK, [], ["groups" => "gardensUser"]);
+    }
+
+
+//! post favorite
 
 }
