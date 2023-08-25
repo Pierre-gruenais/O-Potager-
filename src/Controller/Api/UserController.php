@@ -2,9 +2,12 @@
 
 namespace App\Controller\Api;
 
+use App\Entity\Favorite;
 use App\Entity\User;
 use App\Repository\FavoriteRepository;
+use App\Repository\GardenRepository;
 use App\Repository\UserRepository;
+use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -128,6 +131,7 @@ class UserController extends AbstractController
         if (count($errors) > 0) {
             return $this->json($errors, 400);
         }
+        $updatedUser->setUpdatedAt(new DateTimeImmutable(date(DATE_RFC2822)));
         $em->persist($updatedUser);
         $em->flush();
 
@@ -143,15 +147,15 @@ class UserController extends AbstractController
     {
         $user = $userRepository->find($id);
         // potentiellement j'ai une erreur si l'utilisateur' n'existe pas
-       
+
         try {
-            
+
             $em->remove($user);
         } catch (ORMInvalidArgumentException $e) {
 
             return $this->json(["error" => "l'utilisateur' n'existe pas"], Response::HTTP_BAD_REQUEST);
         }
-        
+
         $em->flush();
         return $this->json("the user has been deleted with success", Response::HTTP_OK);
     }
@@ -186,60 +190,57 @@ class UserController extends AbstractController
     }
 
 
-    // //! POST FAVORITE
+    //! POST FAVORITE
 
 
-    // /**
-    //  * @Route("/api/users/{id}/favorites", nam        $sql = '
-    //         SELECT *,' .$formule .' AS dist
-    //         FROM garden
-    //         WHERE ' . $formule . '<=' . $distance . '
-    //         ORDER BY dist ASCe="app_api_user_postFavorite", methods={"POST"})
-    //  */
-    // public function postFavorite(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
-    // {
-    //     // je récupere un json en brut
-    //     $jsonContent = $request->getContent();
-    //     //! verifier si l'utilisateur existe deja
-    //     // potentiellement j'ai une erreur si le json n'est pas bon
-    //     // je transforme ce json en entité user
-    //     try {
-    //         $user = $serializer->deserialize($jsonContent, User::class, 'json');
-    //     } catch (NotEncodableValueException $e) {
-    //         // je gere le cas ou il ya l'erreur
-    //         return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
-    //     }
+    /**
+     * @Route("/api/users/{id}/gardens/{gardenId}/favorites", name="app_api_user_getFavoriteUser", methods={"POST"})
+     * on ajoute un favori a un utilisateur
+     */
 
+    public function postFavorite(int $id, UserRepository $userRepository,GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
+    {
+        // je récupere un json en brut
+        $jsonContent = $request->getContent();
+       
+        // je transforme ce json en entité user
+        try {
+            $user = $serializer->deserialize($jsonContent, User::class, 'json');
+        } catch (NotEncodableValueException $e) {
+            // je gere le cas ou le json est incorrect
+            return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
+        }
 
+        // je detecte les erreurs sur mon entité avant de la persister
+        $errors = $validator->validate($user);
 
-    //     // je detecte les erreurs sur mon entité avant de la persister
-    //     $errors = $validator->validate($user);
+        // on renvoi un json avec les erreurs
+        if (count($errors) > 0) {
 
-    //     // on renvoi un json avec les erreurs
-    //     if (count($errors) > 0) {
+            // je crée un nouveau tableau d'erreur
+            $dataErrors = [];
 
-    //         // je crée un nouveau tableau d'erreur
-    //         $dataErrors = [];
+            foreach ($errors as $error) {
+                // j'injecte dans le tableau à l'index de l'input, les messages d'erreurs qui concernent l'erreur en question
+                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
+            }
 
-    //         foreach ($errors as $error) {
-    //             // j'injecte dans le tableau à l'index de l'input, les messages d'erreurs qui concernent l'erreur en question
-    //             $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-    //         }
+            // je retourne le json avec mes erreurs
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $favorite = new Favorite();
+        $favorite->setGarden($gardenId);
+        $user->addFavorite($favorite);
+        $entityManager->persist($user);
 
-    //         // je retourne le json avec mes erreurs
-    //         return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-    //     }
+        $entityManager->flush();
 
-    //     $entityManager->persist($user);
-
-    //     $entityManager->flush();
-
-    //     return $this->json([$user], Response::HTTP_CREATED, [
-    //         "Location" => $this->generateUrl("app_api_user_getUsersById", ["id" => $user->getId()])
-    //     ], [
-    //             "groups" => "users"
-    //         ]);
-    // }
+        return $this->json([$user], Response::HTTP_CREATED, [
+            "Location" => $this->generateUrl("app_api_user_getUsersById", ["id" => $user->getId()])
+        ], [
+                "groups" => "users"
+            ]);
+    }
 
 
     //! DELETE FAVORITE USER
@@ -249,12 +250,12 @@ class UserController extends AbstractController
      * @Route("/api/users/{id}/favorites/{favoriteId}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
      * on supprime un favoris d'un utilisateur
      */
-    public function deleteFavoriteById(int $id,int $favoriteId, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
+    public function deleteFavoriteById(int $id, int $favoriteId, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
     {
         //  potentiellement j'ai une erreur si le favoris n'existe pas
         // on recupere le favoris
-        $favorites = $favoriteRepository->findOneFavoritesByUserId($id,$favoriteId);
-        
+        $favorites = $favoriteRepository->findOneFavoritesByUserId($id, $favoriteId);
+
 
         try {
             foreach ($favorites as $favorite) {
@@ -286,6 +287,7 @@ class UserController extends AbstractController
         if (!$user) {
             return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
         }
+        //! is empty
         // on recupere tous les favoris
         $favorites = $favoriteRepository->findAllFavoritesByUserId($id);
 
