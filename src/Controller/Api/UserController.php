@@ -36,7 +36,7 @@ class UserController extends AbstractController
         if (!$users) {
             return $this->json(["error" => "There are no users"], Response::HTTP_BAD_REQUEST);
         }
-        return $this->json($users, Response::HTTP_OK, [], ["groups" => "users"]);
+        return $this->json($users, Response::HTTP_OK, [], ["groups" => "usersWithRelations"]);
     }
 
 
@@ -54,7 +54,7 @@ class UserController extends AbstractController
         if (!$user) {
             return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
-        return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
+        return $this->json($user, Response::HTTP_OK, [], ["groups" => "usersWithRelations"]);
     }
 
 
@@ -130,7 +130,7 @@ class UserController extends AbstractController
         $em->flush();
 
         // Return json with updated user datas 
-        return $this->json($updatedUser, Response::HTTP_OK, [], ["groups" => "users"]);
+        return $this->json($updatedUser, Response::HTTP_OK, [], ["groups" => "usersWithRelations"]);
     }
 
 
@@ -181,7 +181,7 @@ class UserController extends AbstractController
             return $this->json(["error" => "The user with ID " . $id . " has no favorites."], Response::HTTP_BAD_REQUEST);
         }
 
-        return $this->json($favorites, Response::HTTP_OK, [], ["groups" => "userfavorites"]);
+        return $this->json($favorites, Response::HTTP_OK, [], ["groups" => "usersWithRelations"]);
     }
 
 
@@ -307,7 +307,7 @@ class UserController extends AbstractController
         // Retrieve all the gardens of a user
         $gardens = $user->getGardens();
 
-        return $this->json($gardens, Response::HTTP_OK, [], ["groups" => "gardensUser"]);
+        return $this->json($gardens, Response::HTTP_OK, [], ["groups" => "usersWithRelations"]);
     }
 
 

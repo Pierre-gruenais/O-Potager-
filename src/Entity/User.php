@@ -18,8 +18,7 @@ class User
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $id;
 
@@ -27,8 +26,7 @@ class User
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $username;
 
@@ -36,7 +34,6 @@ class User
      * @ORM\Column(type="string", length=64)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
-     * @Groups({"users"})
      */
     private $password;
 
@@ -45,8 +42,7 @@ class User
      * @Assert\NotBlank
      * @Assert\Email
      * @Assert\Length(max=255)
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $email;
 
@@ -54,7 +50,7 @@ class User
      * @ORM\Column(type="string", length=64, nullable=true)
      * @Assert\NotBlank
      * @Assert\Length(max=64)
-     * @Groups({"gardensWithRelations", "users"})
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $phone;
 
@@ -62,7 +58,7 @@ class User
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
-     * @Groups({"users"})
+     * @Groups({"usersWithRelations"})
      */
     private $role;
 
@@ -70,31 +66,31 @@ class User
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Assert\NotBlank
      * @Assert\Url
-     * @Groups({"gardensWithRelations"})
-     * @Groups({"users"})
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $avatar;
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Groups({"users"})
+     * @Groups({"usersWithRelations"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
-     * @Groups({"users"})
+     * @Groups({"usersWithRelations"})
      */
     private $updatedAt;
 
     /**
      * @ORM\OneToMany(targetEntity=Garden::class, mappedBy="user", orphanRemoval=true)
-     * @Groups({"userWithRelations"})
+     * @Groups({"usersWithRelations"})
      */
     private $gardens;
 
     /**
      * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="user", orphanRemoval=true,cascade={"persist"})
+     * @Groups({"usersWithRelations"})
      */
     private $favorites;
 
