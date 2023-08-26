@@ -56,15 +56,15 @@ class GardenController extends AbstractController
             $garden = $serializer->deserialize($jsonContent, Garden::class, 'json');
             //! array unique validation url (deux fois pas la meme !)
         } catch (NotEncodableValueException $e) {
-        
+
             return $this->json(['error' => 'JSON INVALID'], Response::HTTP_BAD_REQUEST);
-        
+
         }
 
         $errors = $validator->validate($garden);
 
         if (count($errors) > 0) {
-            
+
             $dataErrors = [];
 
             foreach ($errors as $error) {
@@ -74,14 +74,14 @@ class GardenController extends AbstractController
             return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $entityManager ->persist($garden);
+        $entityManager->persist($garden);
         $entityManager->flush();
 
         return $this->json([$garden], Response::HTTP_CREATED, [
             "Location" => $this->generateUrl("app_api_garden_getGardenById", ["id" => $garden->getId()])
         ], [
-            "groups" => "gardensWithRelations"
-        ]);
+                "groups" => "gardensWithRelations"
+            ]);
     }
 
     /**
@@ -107,7 +107,7 @@ class GardenController extends AbstractController
 
 
         $errors = $validator->validate($updatedGarden);
-        
+
         if (count($errors) > 0) {
             return $this->json($errors, 400);
         }
@@ -117,7 +117,7 @@ class GardenController extends AbstractController
 
         return $this->json($updatedGarden, Response::HTTP_OK, [], ["groups" => "gardensWithRelations"]);
     }
-    
+
 
     /**
      * @Route("/api/gardens/{id}", name="app_api_garden_deleteGardenById", methods={"DELETE"})
@@ -126,12 +126,12 @@ class GardenController extends AbstractController
     {
         try {
             $gardenRepository->remove($garden, true);
-            
+
         } catch (ORMInvalidArgumentException $e) {
 
             return $this->json(["error" => "le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
         }
-        
+
         return $this->json("Le jardin a bien été supprimé", Response::HTTP_NO_CONTENT);
     }
 
@@ -141,11 +141,11 @@ class GardenController extends AbstractController
     public function getGardensBySearch(Request $request, GardenRepository $gardenRepository): JsonResponse
     {
         $dataCity = $request->query->get('city');
-        
+        // dd($dataCity);
         $dataApi = $this->nominatimApi->getCoordinates($dataCity);
 
-        $cityLat = $dataApi['lat'];
-        $cityLon = $dataApi['lon'];
+        $cityLat = $dataApi[ 'lat' ];
+        $cityLon = $dataApi[ 'lon' ];
 
         $dataDist = $request->query->get('dist');
 

@@ -15,7 +15,6 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
@@ -190,18 +189,22 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/{id}/gardens/{gardenId}/favorites", name="app_api_user_postFavoriteUser", methods={"POST"})
+     * @Route("/api/users/favorites", name="app_api_user_postFavoriteUser", methods={"POST"})
      * Add a favorite garden to a user
      */
 
-    public function postFavorite(int $id, int $gardenId, UserRepository $userRepository, GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
+    public function postFavorite(UserRepository $userRepository, GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
     {
+        // Retrieve the id from the request body
+        $id = $request->query->get('id');
         // Find user or return error
         $user = $userRepository->find($id);
         if (!$user) {
             return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
 
+        // Retrieve the gardenId from the request body
+        $gardenId = $request->query->get('gardenId');
         // Find garden or return error
         $garden = $gardenRepository->find($gardenId);
         if (!$garden) {
