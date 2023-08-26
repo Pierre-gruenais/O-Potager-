@@ -24,14 +24,19 @@ use Symfony\Component\Validator\Validator\ValidatorInterface;
 class UserController extends AbstractController
 {
 
+
     //! GET USERS
     /**
      * @Route("/api/users", name="app_api_user_getUsers", methods={"GET"})
+     * Retrieve all datas of all users 
      */
     public function getUsers(UserRepository $userRepository): JsonResponse
     {
+        // Find all users or return error
         $users = $userRepository->findAll();
-
+        if (!$users) {
+            return $this->json(["error" => "There are no users"], Response::HTTP_BAD_REQUEST);
+        }
         return $this->json($users, Response::HTTP_OK, [], ["groups" => "users"]);
     }
 
@@ -40,14 +45,15 @@ class UserController extends AbstractController
     //! GET USER
     /**
      * @Route("/api/users/{id}", name="app_api_user_getUsersById", methods={"GET"})
+     * Retrieve all datas of a user 
      */
     public function getUsersById(int $id, UserRepository $userRepository): JsonResponse
     {
-
+        // Find user or return error
         $user = $userRepository->find($id);
-        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
+
         if (!$user) {
-            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
         return $this->json($user, Response::HTTP_OK, [], ["groups" => "users"]);
     }
@@ -57,45 +63,29 @@ class UserController extends AbstractController
     //! POST USER
     /**
      * @Route("/api/users", name="app_api_user_postUsers", methods={"POST"})
+     * Add new user in database
      */
     public function postUsers(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
     {
-        // je récupere un json en brut
+        // Deserialize JSON content into User object 
         $jsonContent = $request->getContent();
-        //! verifier si l'utilisateur existe deja
-        // potentiellement j'ai une erreur si le json n'est pas bon
-        // je transforme ce json en entité user
-        try {
-            $user = $serializer->deserialize($jsonContent, User::class, 'json');
-        } catch (NotEncodableValueException $e) {
-            // je gere le cas ou il ya l'erreur
-            return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
-        }
+        $user = $serializer->deserialize($jsonContent, User::class, 'json');
 
-
-
-        // je detecte les erreurs sur mon entité avant de la persister
+        // Validate User object  or return validation errors
         $errors = $validator->validate($user);
-
-        // on renvoi un json avec les erreurs
         if (count($errors) > 0) {
-
-            // je crée un nouveau tableau d'erreur
             $dataErrors = [];
-
             foreach ($errors as $error) {
-                // j'injecte dans le tableau à l'index de l'input, les messages d'erreurs qui concernent l'erreur en question
                 $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
             }
-
-            // je retourne le json avec mes erreurs
             return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        // Post user and save changes into database
         $entityManager->persist($user);
-
         $entityManager->flush();
 
+        // Return json with datas of new user 
         return $this->json([$user], Response::HTTP_CREATED, [
             "Location" => $this->generateUrl("app_api_user_getUsersById", ["id" => $user->getId()])
         ], [
@@ -107,6 +97,7 @@ class UserController extends AbstractController
     //! PUT USER
     /**
      * @Route("/api/users/{id}", name="app_api_user_putUser", methods={"PUT"})
+     * Update one user
      */
     public function putUser(
         int $id,
@@ -120,18 +111,14 @@ class UserController extends AbstractController
         // Find user or return error
         $user = $userRepository->find($id);
         if (!$user) {
-            return $this->json(["error" => "User does not exist"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
 
-        // Deserialize JSON content or return error
+        // Deserialize JSON content into object to update 
         $jsonContent = $request->getContent();
-        try {
-            $updatedUser = $serializer->deserialize($jsonContent, User::class, 'json', [
-                AbstractNormalizer::OBJECT_TO_POPULATE => $user
-            ]);
-        } catch (NotEncodableValueException $e) {
-            return $this->json(["error" => "Invalid JSON"], Response::HTTP_BAD_REQUEST);
-        }
+        $updatedUser = $serializer->deserialize($jsonContent, User::class, 'json', [
+            AbstractNormalizer::OBJECT_TO_POPULATE => $user
+        ]);
 
         // Validate user or return validation errors
         $validationErrors = $validator->validate($updatedUser);
@@ -139,10 +126,11 @@ class UserController extends AbstractController
             return $this->json($validationErrors, Response::HTTP_BAD_REQUEST);
         }
 
-        // Update user and save changes
+        // Update property "updated_at" and save changes into database
         $updatedUser->setUpdatedAt(new DateTimeImmutable());
         $em->flush();
 
+        // Return json with updated user datas 
         return $this->json($updatedUser, Response::HTTP_OK, [], ["groups" => "users"]);
     }
 
@@ -151,27 +139,26 @@ class UserController extends AbstractController
     //! DELETE USER
     /**
      * @Route("/api/users/{id}", name="app_api_user_deleteUser", methods={"DELETE"})
+     * Delete one user
      */
     public function deleteUser(int $id, UserRepository $userRepository, EntityManagerInterface $em): JsonResponse
     {
+        // Find user or return error
         $user = $userRepository->find($id);
-
         if (!$user) {
-            return $this->json(["error" => "User does not exist"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
 
+        // Remove user and save changes into database or return error
         try {
             $em->remove($user);
             $em->flush();
         } catch (ORMInvalidArgumentException $e) {
-            return $this->json(["error" => "Failed to delete user"], Response::HTTP_INTERNAL_SERVER_ERROR);
+            return $this->json(["error" => "Failed to delete the user with ID " . $id . ""], Response::HTTP_INTERNAL_SERVER_ERROR);
         }
-
-        return $this->json("The user has been deleted successfully", Response::HTTP_OK);
+        // return json with success custom message
+        return $this->json("The user with ID " . $id . " has been deleted successfully", Response::HTTP_OK);
     }
-
-
-
 
 
 
@@ -180,21 +167,19 @@ class UserController extends AbstractController
 
     /**
      * @Route("/api/users/{id}/favorites", name="app_api_user_getFavoriteUser", methods={"GET"})
-     * on recupere tous les favoris d'un utilisateur
+     * Retrieve all favorites of a user
      */
     public function getFavoritesUser(int $id, UserRepository $userRepository): JsonResponse
     {
-        // on recupere l'utilisateur
+        // Find user or return error
         $user = $userRepository->find($id);
-        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
         if (!$user) {
-            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
-        // on recupere les favoris de l'utisateur
+        // Get user's favorites or return error if the user has no favorites
         $favorites = $user->getFavorites();
-        // si l'utilisateur n'a pas de favoris on retourne une erreur
         if ($favorites->isEmpty()) {
-            return $this->json(["error" => "l'utisateur n'a pas de favoris"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " has no favorites."], Response::HTTP_BAD_REQUEST);
         }
 
         return $this->json($favorites, Response::HTTP_OK, [], ["groups" => "userfavorites"]);
@@ -206,27 +191,31 @@ class UserController extends AbstractController
 
     /**
      * @Route("/api/users/{id}/gardens/{gardenId}/favorites", name="app_api_user_postFavoriteUser", methods={"POST"})
-     * on ajoute un favori a un utilisateur
+     * Add a favorite garden to a user
      */
 
-    public function postFavorite(int $id,int $gardenId, UserRepository $userRepository,GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
+    public function postFavorite(int $id, int $gardenId, UserRepository $userRepository, GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
     {
-        // on recupere l'utilisateur
+        // Find user or return error
         $user = $userRepository->find($id);
-        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
         if (!$user) {
-            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
-        $garden = $gardenRepository->find($gardenId);
-         //  potentiellement j'ai une erreur si le jardin n'existe pas
-         if (!$garden) {
-            return $this->json(["error" => "le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
-        }
-        $favorite = new Favorite();
-        $favorite->setGarden($garden);
-        $user->addFavorite($favorite);
-        $entityManager->persist($user);
 
+        // Find garden or return error
+        $garden = $gardenRepository->find($gardenId);
+        if (!$garden) {
+            return $this->json(["error" => "The garden with ID " . $gardenId . " does not exist"], Response::HTTP_BAD_REQUEST);
+        }
+
+        // Creating a new Favorite object instance
+        $favorite = new Favorite();
+        // Setting the associated garden for the favorite
+        $favorite->setGarden($garden);
+        // Adding the favorite to the user
+        $user->addFavorite($favorite);
+        // Save changes into database
+        $entityManager->persist($user);
         $entityManager->flush();
 
         return $this->json([$user], Response::HTTP_CREATED, [
@@ -241,26 +230,24 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/{id}/favorites/{favoriteId}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
-     * on supprime un favoris d'un utilisateur
+     * @Route("/api/users/favorites/{id}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
+     * Delete one favorite of a user
      */
-    public function deleteFavoriteById(int $id, int $favoriteId, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
+    public function deleteFavoriteById(int $id, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
     {
-        //  potentiellement j'ai une erreur si le favoris n'existe pas
-        // on recupere le favoris
-        $favorites = $favoriteRepository->findOneFavoritesByUserId($id, $favoriteId);
-
-
-        try {
-            foreach ($favorites as $favorite) {
-                $em->remove($favorite);
-            }
-        } catch (ORMInvalidArgumentException $e) {
-
-            return $this->json(["error" => "le favoris n'existe pas"], Response::HTTP_BAD_REQUEST);
+        // Find favorite or return error
+        $favorite = $favoriteRepository->find($id);
+        if (!$favorite) {
+            return $this->json(["error" => "The favorite with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
+
+        // Remove favorite
+        $em->remove($favorite);
+
+        // Save changes into database 
         $em->flush();
-        return $this->json("the favorite has been deleted with success", Response::HTTP_OK);
+
+        return $this->json("the favorite " . $id . " has been deleted with success", Response::HTTP_OK);
 
 
     }
@@ -270,30 +257,31 @@ class UserController extends AbstractController
 
     /**
      * @Route("/api/users/{id}/favorites", name="app_api_user_deleteFavorites", methods={"DELETE"})
-     * on supprime tous les favoris d'un utilisateur
+     * Delete all favorites of a user
      */
     public function deleteFavorites(int $id, UserRepository $userRepository, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
     {
-        // on recupere l'utilisateur
+        // Find user or return error
         $user = $userRepository->find($id);
-
-        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
         if (!$user) {
-            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " has no favorites."], Response::HTTP_BAD_REQUEST);
         }
-        //! is empty
-        // on recupere tous les favoris
-        $favorites = $favoriteRepository->findAllFavoritesByUserId($id);
 
+        // Retrieve all the favorites With findBy() method
+        $favorites = $favoriteRepository->findBy(["user" => $id]);
+        // Early return si l'utilisateur n'a pas de favoris
+        if (!$favorites) {
+            return $this->json(["error" => "The user with ID " . $id . " has no favorites."], Response::HTTP_BAD_REQUEST);
+        }
 
+        // Delete all the favorites one by one
         foreach ($favorites as $favorite) {
             $em->remove($favorite);
         }
-
+        // Save changes into database 
         $em->flush();
 
-        $username = $user->getUsername();
-        return $this->json("all favorites of $username  have been deleted with success", Response::HTTP_OK);
+        return $this->json("all favorites of user with ID " . $id . "  have been deleted with success", Response::HTTP_OK);
 
 
     }
@@ -303,16 +291,17 @@ class UserController extends AbstractController
 
     /**
      * @Route("/api/users/{id}/gardens", name="app_api_user_getGardensUser", methods={"GET"})
-     * récupérer tous les jardins d'un utilisateur
+     * Retrieve all the gardens of a user
      */
     public function getGardensUser(int $id, UserRepository $userRepository): JsonResponse
     {
-
+        // Find user or return error
         $user = $userRepository->find($id);
-        //  potentiellement j'ai une erreur si l'utilisateur n'existe pas
         if (!$user) {
-            return $this->json(["error" => "l'utisateur n'existe pas"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "The user with ID " . $id . " does not exist"], Response::HTTP_BAD_REQUEST);
         }
+
+        // Retrieve all the gardens of a user
         $gardens = $user->getGardens();
 
         return $this->json($gardens, Response::HTTP_OK, [], ["groups" => "gardensUser"]);
