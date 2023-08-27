@@ -41,7 +41,7 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
             # ! ROUTES API
-        # - { path: ^/api, roles: ROLE_ADMIN, methods: [POST, PUT ,DELETE] }
+         - { path: ^/api, roles: ROLE_ADMIN, methods: [POST, PUT ,DELETE] }
      # Pour économiser des lignes dans notre ACL et rendre l'application plus logique on hiérarchise les rôles
     role_hierarchy:
     # L'admin a les droits de user
