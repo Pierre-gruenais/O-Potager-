@@ -22,14 +22,13 @@ class Favorite
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="favorites")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"userWithRelations"})
      */
     private $user;
 
     /**
      * @ORM\ManyToOne(targetEntity=Garden::class, inversedBy="favorites")
      * @ORM\JoinColumn(nullable=false)
-     * @Groups({"userWithRelations"})
+     * @Groups({"usersWithRelations"})
      */
     private $garden;
 
