@@ -18,7 +18,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
-
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class UserController extends AbstractController
 {
@@ -64,11 +64,21 @@ class UserController extends AbstractController
      * @Route("/api/users", name="app_api_user_postUsers", methods={"POST"})
      * Add new user in database
      */
-    public function postUsers(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
-    {
+    public function postUsers(
+        Request $request,
+        SerializerInterface $serializer,
+        ValidatorInterface $validator,
+        EntityManagerInterface $entityManager,
+        UserPasswordHasherInterface $userPasswordHasher
+    ): JsonResponse {
+
         // Deserialize JSON content into User object 
         $jsonContent = $request->getContent();
         $user = $serializer->deserialize($jsonContent, User::class, 'json');
+
+        //Hashing the password
+        $password = $user->getPassword();
+        $user->setPassword($userPasswordHasher->hashPassword($user,$password));
 
         // Validate User object  or return validation errors
         $errors = $validator->validate($user);
