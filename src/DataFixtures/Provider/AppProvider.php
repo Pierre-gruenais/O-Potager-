@@ -10,8 +10,8 @@ class AppProvider
      * @var array
      */
     private $roles = [
-        "ROLE_USER",
-        "ROLE_ADMIN"
+        ["ROLE_USER"],
+        ["ROLE_ADMIN"]
     ];
     /**
      * available cities

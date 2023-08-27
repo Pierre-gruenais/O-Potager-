@@ -88,7 +88,7 @@ class UserController extends AbstractController
         return $this->json([$user], Response::HTTP_CREATED, [
             "Location" => $this->generateUrl("app_api_user_getUsersById", ["id" => $user->getId()])
         ], [
-                "groups" => "users"
+                "groups" => "usersWithRelations"
             ]);
     }
 

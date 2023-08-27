@@ -16,6 +16,7 @@ use Doctrine\Persistence\ObjectManager;
 use Doctrine\Bundle\FixturesBundle\Fixture;
 use App\DataFixtures\Provider\AppProvider;
 use App\Service\NominatimApiService;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 class AppFixtures extends Fixture
 {
@@ -23,11 +24,13 @@ class AppFixtures extends Fixture
 
     private $unsplashApi;
     private $nominatimApiService;
+    private $userPasswordHasher;
 
-    public function __construct(UnsplashApiService $unsplashApi, NominatimApiService $nominatimApiService)
+    public function __construct(UnsplashApiService $unsplashApi, NominatimApiService $nominatimApiService, UserPasswordHasherInterface $userPasswordHasher)
     {
         $this->unsplashApi = $unsplashApi;
         $this->nominatimApiService = $nominatimApiService;
+        $this->userPasswordHasher = $userPasswordHasher;
     }
 
     public function load(ObjectManager $manager): void
@@ -48,10 +51,10 @@ class AppFixtures extends Fixture
             // J'instancie un nouvel objet user
             $user = new User();
             $user->setUsername($faker->userName());
-            $user->setPassword($faker->password(8, 20));
+            $user->setPassword($this->userPasswordHasher->hashPassword($user,$faker->password(8, 20)) );
             $user->setEmail($faker->email());
             $user->setPhone($faker->phoneNumber());
-            $user->setRole($role);
+            $user->setRoles($role);
             $user->setAvatar($faker->gravatarUrl());
             $user->setCreatedAt(new DateTimeImmutable($faker->date()));
 
@@ -102,7 +105,7 @@ class AppFixtures extends Fixture
 
 
         // ! Picture
-        for ($i = 0; $i < 30; $i++) {
+        for ($i = 0; $i < 10; $i++) {
             // J'instancie un nouvel objet picture
 
             $picture = new Picture();
