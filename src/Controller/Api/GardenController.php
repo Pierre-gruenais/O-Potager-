@@ -62,7 +62,7 @@ class GardenController extends AbstractController
         
         }
 
-        $cityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " . $garden->getPostalCode() . " " .$garden->getCity());
+        $cityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " .$garden->getCity());
 
         $garden->setLat($cityApi['lat']);
         $garden->setLon($cityApi['lon']);
@@ -145,7 +145,7 @@ class GardenController extends AbstractController
             return $this->json(["error" => "le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
         }
         
-        return $this->json("Le jardin a bien été supprimé", Response::HTTP_NO_CONTENT);
+        return $this->json("Le jardin a bien été supprimé", Response::HTTP_OK);
     }
 
     /**
