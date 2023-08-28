@@ -73,6 +73,7 @@ class GardenRepository extends ServiceEntityRepository
         $sql = '
             SELECT *,' .$formule .' AS dist
             FROM garden
+            INNER JOIN user ON garden.user_id = user.id
             WHERE ' . $formule . '<=' . $distance . '
             ORDER BY dist ASC
             ';
