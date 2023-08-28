@@ -7,6 +7,7 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=GardenRepository::class)
@@ -17,6 +18,7 @@ class Garden
      * @ORM\Id
      * @ORM\GeneratedValue
      * @ORM\Column(type="integer")
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $id;
 
@@ -24,6 +26,7 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $title;
 
@@ -31,6 +34,7 @@ class Garden
      * @ORM\Column(type="string", length=1000)
      * @Assert\NotBlank
      * @Assert\Length(max=1000)
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $description;
 
@@ -38,12 +42,14 @@ class Garden
      * @ORM\Column(type="string", length=240)
      * @Assert\NotBlank
      * @Assert\Length(max=240)
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $address;
 
     /**
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="string")
      * @Assert\NotBlank
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $postalCode;
 
@@ -51,52 +57,61 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $city;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $water;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations","usersWithRelations","gardensUser"})
      */
     private $tool;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $shed;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $cultivation;
 
     /**
      * @ORM\Column(type="integer")
      * @Assert\NotBlank
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $surface;
 
     /**
      * @ORM\Column(type="boolean")
-     * @Assert\NotBlank
+     * @Assert\NotNull
+     * @Groups({"gardensWithRelations"})
      */
     private $phoneAccess;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable", nullable=true)
+     * @Groups({"gardensWithRelations"})
      */
     private $updatedAt;
 
@@ -104,27 +119,42 @@ class Garden
      * @ORM\Column(type="string", length=128)
      * @Assert\NotBlank
      * @Assert\Length(max=128)
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $state;
 
     /**
-     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens")
-     * @ORM\JoinColumn(nullable=false)
-     */
-    private $user;
-
-    /**
-     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", orphanRemoval=true)
+     * @ORM\OneToMany(targetEntity=Picture::class, mappedBy="garden", cascade={"persist"}, orphanRemoval=true)
+     * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $pictures;
 
     /**
-     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="Garden", orphanRemoval=true)
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens", cascade={"persist"})
+     * @Groups({"gardensWithRelations"})
+     */
+    private $user;
+
+    /**
+     * @ORM\OneToMany(targetEntity=Favorite::class, mappedBy="garden", cascade={"persist"}, orphanRemoval=true)
      */
     private $favorites;
 
+    /**
+     * @ORM\Column(type="float")
+     * @Groups({"gardensWithRelations","usersWithRelations"})
+     */
+    private $lat;
+
+    /**
+     * @ORM\Column(type="float")
+     * @Groups({"gardensWithRelations","usersWithRelations"})
+     */
+    private $lon;
+
     public function __construct()
     {
+        $this->createdAt = new \DateTimeImmutable();
         $this->pictures = new ArrayCollection();
         $this->favorites = new ArrayCollection();
     }
@@ -302,18 +332,6 @@ class Garden
         return $this;
     }
 
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): self
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Picture>
      */
@@ -344,6 +362,18 @@ class Garden
         return $this;
     }
 
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
     /**
      * @return Collection<int, Favorite>
      */
@@ -370,6 +400,30 @@ class Garden
                 $favorite->setGarden(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLat(): ?float
+    {
+        return $this->lat;
+    }
+
+    public function setLat(float $lat): self
+    {
+        $this->lat = $lat;
+
+        return $this;
+    }
+
+    public function getLon(): ?float
+    {
+        return $this->lon;
+    }
+
+    public function setLon(float $lon): self
+    {
+        $this->lon = $lon;
 
         return $this;
     }
