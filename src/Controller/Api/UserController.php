@@ -19,14 +19,27 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
+use App\Service\ValidatorErrorService;
+
+/**
+ * @Route("/users")
+ */
 
 class UserController extends AbstractController
 {
 
+    private $validatorError;
+
+    public function __construct(
+        validatorErrorService
+        $validatorErrorService
+    ) {
+        $this->validatorError = $validatorError;
+    }
 
     //! GET USERS
     /**
-     * @Route("/api/users", name="app_api_user_getUsers", methods={"GET"})
+     * @Route("/", name="app_api_user_getUsers", methods={"GET"})
      * Retrieve all datas of all users 
      */
     public function getUsers(UserRepository $userRepository): JsonResponse
@@ -43,8 +56,9 @@ class UserController extends AbstractController
 
     //! GET USER
     /**
-     * @Route("/api/users/{id}", name="app_api_user_getUsersById", methods={"GET"})
-     * Retrieve all datas of a user 
+     * @Route("/{id}", name="app_api_user_getUsersById", methods={"GET"})
+     * Retrieve all datas of a user
+     * @param integer $id user id
      */
     public function getUsersById(int $id, UserRepository $userRepository): JsonResponse
     {
@@ -61,7 +75,7 @@ class UserController extends AbstractController
 
     //! POST USER
     /**
-     * @Route("/api/users", name="app_api_user_postUsers", methods={"POST"})
+     * @Route("/", name="app_api_user_postUsers", methods={"POST"})
      * Add new user in database
      */
     public function postUsers(
@@ -76,19 +90,15 @@ class UserController extends AbstractController
         $jsonContent = $request->getContent();
         $user = $serializer->deserialize($jsonContent, User::class, 'json');
 
-        //Hashing the password
+        // Hashing the password
         $password = $user->getPassword();
-        $user->setPassword($userPasswordHasher->hashPassword($user,$password));
+        $user->setPassword($userPasswordHasher->hashPassword($user, $password));
 
         // Validate User object  or return validation errors
-        $errors = $validator->validate($user);
-        if (count($errors) > 0) {
-            $dataErrors = [];
-            foreach ($errors as $error) {
-                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-            }
+        $dataErrors = $this->validatorError->returnErrors($user);
+        if ($dataErrors) {
             return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
-        }
+        };
 
         // Post user and save changes into database
         $entityManager->persist($user);
@@ -105,8 +115,9 @@ class UserController extends AbstractController
 
     //! PUT USER
     /**
-     * @Route("/api/users/{id}", name="app_api_user_putUser", methods={"PUT"})
+     * @Route("/{id}", name="app_api_user_putUser", methods={"PUT"})
      * Update one user
+     * @param integer $id user id
      */
     public function putUser(
         int $id,
@@ -130,10 +141,10 @@ class UserController extends AbstractController
         ]);
 
         // Validate user or return validation errors
-        $validationErrors = $validator->validate($updatedUser);
-        if (count($validationErrors) > 0) {
-            return $this->json($validationErrors, Response::HTTP_BAD_REQUEST);
-        }
+        $dataErrors = $this->validatorError->returnErrors($user);
+        if ($dataErrors) {
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        };
 
         // Update property "updated_at" and save changes into database
         $updatedUser->setUpdatedAt(new DateTimeImmutable());
@@ -147,8 +158,9 @@ class UserController extends AbstractController
 
     //! DELETE USER
     /**
-     * @Route("/api/users/{id}", name="app_api_user_deleteUser", methods={"DELETE"})
-     * Delete one user
+     * @Route("/{id}", name="app_api_user_deleteUser", methods={"DELETE"})
+     * Delete one user 
+     * @param integer $id user id
      */
     public function deleteUser(int $id, UserRepository $userRepository, EntityManagerInterface $em): JsonResponse
     {
@@ -175,8 +187,9 @@ class UserController extends AbstractController
     //! GET FAVORITES USER
 
     /**
-     * @Route("/api/users/{id}/favorites", name="app_api_user_getFavoriteUser", methods={"GET"})
+     * @Route("/{id}/favorites", name="app_api_user_getFavoriteUser", methods={"GET"})
      * Retrieve all favorites of a user
+     * @param integer $id user id
      */
     public function getFavoritesUser(int $id, UserRepository $userRepository): JsonResponse
     {
@@ -199,7 +212,7 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/favorites", name="app_api_user_postFavoriteUser", methods={"POST"})
+     * @Route("/favorites", name="app_api_user_postFavoriteUser", methods={"POST"})
      * Add a favorite garden to a user
      */
 
@@ -243,8 +256,9 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/favorites/{id}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
+     * @Route("/favorites/{id}", name="app_api_user_deleteFavoriteById", methods={"DELETE"})
      * Delete one favorite of a user
+     * @param integer $id user id
      */
     public function deleteFavoriteById(int $id, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
     {
@@ -269,8 +283,9 @@ class UserController extends AbstractController
     //! DELETE FAVORITES USER
 
     /**
-     * @Route("/api/users/{id}/favorites", name="app_api_user_deleteFavorites", methods={"DELETE"})
+     * @Route("/{id}/favorites", name="app_api_user_deleteFavorites", methods={"DELETE"})
      * Delete all favorites of a user
+     * @param integer $id user id
      */
     public function deleteFavorites(int $id, UserRepository $userRepository, FavoriteRepository $favoriteRepository, EntityManagerInterface $em): JsonResponse
     {
@@ -303,8 +318,9 @@ class UserController extends AbstractController
 
 
     /**
-     * @Route("/api/users/{id}/gardens", name="app_api_user_getGardensUser", methods={"GET"})
+     * @Route("/{id}/gardens", name="app_api_user_getGardensUser", methods={"GET"})
      * Retrieve all the gardens of a user
+     * @param integer $id user id
      */
     public function getGardensUser(int $id, UserRepository $userRepository): JsonResponse
     {

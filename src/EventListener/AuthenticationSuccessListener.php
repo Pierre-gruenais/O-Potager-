@@ -20,7 +20,8 @@ class AuthenticationSuccessListener
         $data[ 'data' ] = array(
             'roles' => $user->getRoles(),
             'username' => $user->getUserIdentifier(),
-            // "avatar" => $user->getavatar()
+            "avatar" => $user->getAvatar()
+            //! to do : php bin/console cache:clear
         );
 
         $event->setData($data);

@@ -41,6 +41,9 @@ class AppFixtures extends Fixture
         // utilisation de notre provider pour les roles
         $faker->addProvider(new AppProvider());
 
+        
+
+
         //! USER
 
         // Je crée un tableau vide
@@ -63,6 +66,19 @@ class AppFixtures extends Fixture
             $manager->persist($user);
 
         }
+        //! USER ADMIN
+        // Ajout en dur de l'admin O'potager
+
+        $user = new User();
+        $user->setUsername("admin");
+        $user->setPassword($this->userPasswordHasher->hashPassword($user,"admin") );
+        $user->setEmail("opotager@gmail.com");
+        $user->setPhone("0123456789");
+        $user->setRoles(["ROLE_ADMIN"]);
+        $user->setAvatar("https://us.123rf.com/450wm/lerarelart/lerarelart2001/lerarelart200100084/137333196-l-illustration-vectorielle-des-oignons-et-des-carottes-sont-des-amis-l%C3%A9gumes-dr%C3%B4les-de-personnages.jpg?ver=6");
+        $user->setCreatedAt(new DateTimeImmutable($faker->date()));
+
+        $manager->persist($user);
 
         // ! Garden
 
@@ -110,7 +126,7 @@ class AppFixtures extends Fixture
 
             $picture = new Picture();
             // utilisation de l'api Unsplash pour generer des photos de garden
-            $picture->setName($this->unsplashApi->fetchPhotosRandom("garden"));
+            $picture->setUrl($this->unsplashApi->fetchPhotosRandom("garden"));
             $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
             $picture->setGarden($gardenList[array_rand($gardenList)]);
 

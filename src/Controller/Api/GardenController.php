@@ -55,7 +55,7 @@ class GardenController extends AbstractController
         try {
 
             $garden = $serializer->deserialize($jsonContent, Garden::class, 'json');
-            //! array unique validation url (deux fois pas la meme !)
+           
         } catch (NotEncodableValueException $e) {
 
             return $this->json(['error' => 'JSON INVALID'], Response::HTTP_BAD_REQUEST);
