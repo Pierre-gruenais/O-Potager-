@@ -110,7 +110,7 @@ class AppFixtures extends Fixture
 
             $picture = new Picture();
             // utilisation de l'api Unsplash pour generer des photos de garden
-            $picture->setName($this->unsplashApi->fetchPhotosRandom("garden"));
+            $picture->setUrl($this->unsplashApi->fetchPhotosRandom("garden"));
             $picture->setCreatedAt(new DateTimeImmutable($faker->date()));
             $picture->setGarden($gardenList[array_rand($gardenList)]);
 

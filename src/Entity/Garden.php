@@ -105,6 +105,7 @@ class Garden
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Assert\NotBlank
      * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $createdAt;
@@ -131,6 +132,7 @@ class Garden
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class, inversedBy="gardens", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false)
      * @Groups({"gardensWithRelations"})
      */
     private $user;
@@ -142,12 +144,14 @@ class Garden
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\NotBlank
      * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $lat;
 
     /**
      * @ORM\Column(type="float")
+     * @Assert\NotBlank
      * @Groups({"gardensWithRelations","usersWithRelations"})
      */
     private $lon;
