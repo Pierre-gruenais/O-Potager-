@@ -20,7 +20,7 @@ class ApiExceptionSubscriber implements EventSubscriberInterface
             return;
         }
         // allow nominatimApi request usage in garden controller to manage his own exception json response  
-        if (strpos($request->getPathInfo(), "/api/search") === 0) {
+        if (strpos($request->getPathInfo(), "/api/garden/search") === 0) {
             return;
         }
 
