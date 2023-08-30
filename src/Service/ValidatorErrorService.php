@@ -13,6 +13,12 @@ class ValidatorErrorService
         $this->validator = $validator;
     }
     
+    /**
+     * Validate entity or return errors messages
+     *
+     * @param Entity $entity object
+     * @return Array [] if error return array
+     */
     public function returnErrors ($entity) {
         $errors = $this->validator->validate($entity);
 

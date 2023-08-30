@@ -20,7 +20,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route("/gardens")
+ * @Route("/api/gardens")
  */
 class GardenController extends AbstractController
 {
@@ -65,13 +65,23 @@ class GardenController extends AbstractController
      */
     public function getGardensBySearch(Request $request, GardenRepository $gardenRepository): JsonResponse
     {
-        $coordonatesCityApi = $this->nominatimApi->getCoordinates($request->query->get('city'));
-        $cityLat = $coordonatesCityApi[ 'lat' ];
-        $cityLon = $coordonatesCityApi[ 'lon' ];
+
+        $coordinatesCityApi = $this->nominatimApi->getCoordinates($request->query->get('city'));
+        
+        if ($coordinatesCityApi == false){
+            return $this->json(['error' => "La ville que vous recherchez est introuvable."], Response::HTTP_BAD_REQUEST);
+        };
+        
+        $cityLat = $coordinatesCityApi[ 'lat' ];
+        $cityLon = $coordinatesCityApi[ 'lon' ];
 
         $distance = $request->query->get('dist');
 
-        $gardens = $gardenRepository->findGardenByCoordonates($cityLat, $cityLon, $distance);
+        if ($distance === null){
+            $distance = 10;
+        }
+
+        $gardens = $gardenRepository->findGardensByCoordonates($cityLat, $cityLon, $distance);
 
         return $this->json($gardens, Response::HTTP_OK);
     }
@@ -106,9 +116,14 @@ class GardenController extends AbstractController
 
         $garden = $serializer->deserialize($jsonContent, Garden::class, 'json');
 
-        $coordonnatesCityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " .$garden->getCity());
-        $garden->setLat($coordonnatesCityApi['lat']);
-        $garden->setLon($coordonnatesCityApi['lon']);
+        $coordinatesCityApi = $this->nominatimApi->getCoordinates($garden->getCity(), $garden->getAddress());
+        
+        if ($coordinatesCityApi == false){
+            return $this->json(['error' => "L'adresse est introuvable"], Response::HTTP_BAD_REQUEST);
+        };
+
+        $garden->setLat($coordinatesCityApi['lat']);
+        $garden->setLon($coordinatesCityApi['lon']);
         
         $dataErrors = $this->validatorError->returnErrors($garden);
 
@@ -150,9 +165,16 @@ class GardenController extends AbstractController
 
         $updatedGarden = $serializer->deserialize($jsonContent, Garden::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $garden]);
 
-        $coordonatesCityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " .$garden->getCity());
-        $garden->setLat($coordonatesCityApi['lat']);
-        $garden->setLon($coordonatesCityApi['lon']);
+        $coordinatesCityApi = $this->nominatimApi->getCoordinates($garden->getCity(), $garden->getAddress());
+        
+        if ($coordinatesCityApi == false){
+            return $this->json(['error' => "L'adresse est introuvable"], Response::HTTP_BAD_REQUEST);
+        };
+
+        $garden->setLat($coordinatesCityApi['lat']);
+        $garden->setLon($coordinatesCityApi['lon']);
+
+        
         $garden->setUpdatedAt(new DateTimeImmutable());
 
         $dataErrors = $this->validatorError->returnErrors($garden);

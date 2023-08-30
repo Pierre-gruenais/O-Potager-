@@ -63,24 +63,30 @@ class GardenRepository extends ServiceEntityRepository
 //            ->getOneOrNullResult()
 //        ;
 //    }
-
-    public function findGardenByCoordonates(float $lat, float $lon, int $distance = 10)
+    /**
+     * method for recovering gardens in relation to a town and its distance
+     *
+     * @param float $lat city's latitude retrieved from the nominatimApi
+     * @param float $lon city's longitude retrieved from the nominatimApi
+     * @param integer $distance distance between a city and a garden
+     * @return Array [] array gardens
+     */
+    public function findGardensByCoordonates(float $lat, float $lon, int $distance)
     {
         $formule = "(6366*acos(cos(radians($lat))*cos(radians(`lat`))*cos(radians(`lon`) - radians($lon))+sin(radians($lat))*sin(radians(`lat`))))";
 
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
-            SELECT *,' .$formule .' AS dist
+            SELECT *,' . $formule .' AS dist
             FROM garden
             INNER JOIN user ON garden.user_id = user.id
-            WHERE ' . $formule . '<=' . $distance . '
+            WHERE ' . $formule . '<= :distance 
             ORDER BY dist ASC
             ';
-        $stmt = $conn->prepare($sql);
-        $resultSet = $stmt->executeQuery();
 
-        // returns an array of arrays (i.e. a raw data set)
+            $resultSet = $conn->executeQuery($sql, ['distance' => $distance]);
+
         return $resultSet->fetchAllAssociative();
     }
 }
