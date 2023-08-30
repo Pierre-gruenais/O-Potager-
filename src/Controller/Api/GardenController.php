@@ -5,6 +5,7 @@ namespace App\Controller\Api;
 use App\Entity\Garden;
 use App\Repository\GardenRepository;
 use App\Service\NominatimApiService;
+use App\Service\ValidatorErrorService;
 use DateTimeImmutable;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\ORM\ORMInvalidArgumentException;
@@ -18,17 +19,33 @@ use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
+/**
+ * @Route("/api/gardens")
+ */
 class GardenController extends AbstractController
 {
     private $nominatimApi;
+    private $validatorError;
 
-    public function __construct(NominatimApiService $nominatimApi)
+    /**
+     * Construct of the class
+     *
+     * @param NominatimApiService $nominatimApi NominatimAPI call service
+     * @param ValidatorErrorService $validatorError ValidatorError call service
+     */
+    public function __construct(NominatimApiService $nominatimApi, ValidatorErrorService $validatorError)
     {
         $this->nominatimApi = $nominatimApi;
+        $this->validatorError = $validatorError;
     }
 
     /**
-     * @Route("/api/gardens", name="app_api_garden_getGardens", methods={"GET"})
+     * Route for retrieving all garden data
+     * 
+     * @Route("/", name="app_api_garden_getGardens", methods={"GET"})
+     * 
+     * @param GardenRepository $gardenRepository
+     * @return JsonResponse
      */
     public function getGardens(GardenRepository $gardenRepository): JsonResponse
     {
@@ -38,7 +55,45 @@ class GardenController extends AbstractController
     }
 
     /**
-     * @Route("/api/gardens/{id}", name="app_api_garden_getGardenById", methods={"GET"})
+     * Route to retrieve all garden data relative to a distance
+     * 
+     * @Route("/search", name="app_api_garden_getGardensBySearch", methods={"GET"})
+     * 
+     * @param Request $request
+     * @param GardenRepository $gardenRepository
+     * @return JsonResponse
+     */
+    public function getGardensBySearch(Request $request, GardenRepository $gardenRepository): JsonResponse
+    {
+
+        $coordinatesCityApi = $this->nominatimApi->getCoordinates($request->query->get('city'));
+        
+        if ($coordinatesCityApi == false){
+            return $this->json(['error' => "La ville que vous recherchez est introuvable."], Response::HTTP_BAD_REQUEST);
+        };
+        
+        $cityLat = $coordinatesCityApi[ 'lat' ];
+        $cityLon = $coordinatesCityApi[ 'lon' ];
+
+        $distance = $request->query->get('dist');
+
+        if ($distance === null){
+            $distance = 10;
+        }
+
+        $gardens = $gardenRepository->findGardensByCoordonates($cityLat, $cityLon, $distance);
+
+        return $this->json($gardens, Response::HTTP_OK);
+    }
+
+
+    /**
+     * Route used to retrieve all the data for a garden by id
+     * 
+     * @Route("/{id}", name="app_api_garden_getGardenById", methods={"GET"})
+     * 
+     * @param Garden $garden id of the garden
+     * @return JsonResponse
      */
     public function getGardenById(Garden $garden): JsonResponse
     {
@@ -46,42 +101,38 @@ class GardenController extends AbstractController
     }
 
     /**
-     * @Route("/api/gardens", name="app_api_garden_postGarden", methods={"POST"})
+     * Path add a garden 
+     *
+     * @Route("/", name="app_api_garden_postGarden", methods={"POST"})
+     * 
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @param EntityManagerInterface $entityManager
+     * @return JsonResponse
      */
-    public function postGarden(Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $entityManager): JsonResponse
+    public function postGarden(Request $request, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
     {
         $jsonContent = $request->getContent();
 
-        try {
+        $garden = $serializer->deserialize($jsonContent, Garden::class, 'json');
 
-            $garden = $serializer->deserialize($jsonContent, Garden::class, 'json');
-           
-        } catch (NotEncodableValueException $e) {
-
-            return $this->json(['error' => 'JSON INVALID'], Response::HTTP_BAD_REQUEST);
-
-        }
-
-        $cityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " .$garden->getCity());
-
-        $garden->setLat($cityApi['lat']);
-        $garden->setLon($cityApi['lon']);
+        $coordinatesCityApi = $this->nominatimApi->getCoordinates($garden->getCity(), $garden->getAddress());
         
-        $errors = $validator->validate($garden);
+        if ($coordinatesCityApi == false){
+            return $this->json(['error' => "L'adresse est introuvable"], Response::HTTP_BAD_REQUEST);
+        };
 
-        if (count($errors) > 0) {
+        $garden->setLat($coordinatesCityApi['lat']);
+        $garden->setLon($coordinatesCityApi['lon']);
+        
+        $dataErrors = $this->validatorError->returnErrors($garden);
 
-            $dataErrors = [];
-
-            foreach ($errors as $error) {
-                $dataErrors[$error->getPropertyPath()][] = $error->getMessage();
-            }
-
+        if ($dataErrors) {
             return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        $entityManager->persist($garden);
-        $entityManager->flush();
+        $em->persist($garden);
+        $em->flush();
 
         return $this->json([$garden], Response::HTTP_CREATED, [
             "Location" => $this->generateUrl("app_api_garden_getGardenById", ["id" => $garden->getId()])
@@ -91,38 +142,45 @@ class GardenController extends AbstractController
     }
 
     /**
-     * @Route("/api/gardens/{id}", name="app_api_garden_putGardenById", methods={"PUT"})
+     * path to update a garden
+     * 
+     * @Route("/{id}", name="app_api_garden_putGardenById", methods={"PUT"})
+     *
+     * @param Garden $garden id of the garden
+     * @param GardenRepository $gardenRepository
+     * @param Request $request
+     * @param SerializerInterface $serializer
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
      */
-    public function putGardenById(Garden $garden, GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, ValidatorInterface $validator, EntityManagerInterface $em): JsonResponse
+    public function putGardenById(Garden $garden, GardenRepository $gardenRepository, Request $request, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
     {
         $garden = $gardenRepository->find($garden);
 
         if (!$garden) {
-            return $this->json(["error" => "le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "Le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
         }
 
         $jsonContent = $request->getContent();
 
-        try {
-            $updatedGarden = $serializer->deserialize($jsonContent, Garden::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $garden]);
+        $updatedGarden = $serializer->deserialize($jsonContent, Garden::class, 'json', [AbstractNormalizer::OBJECT_TO_POPULATE => $garden]);
 
+        $coordinatesCityApi = $this->nominatimApi->getCoordinates($garden->getCity(), $garden->getAddress());
+        
+        if ($coordinatesCityApi == false){
+            return $this->json(['error' => "L'adresse est introuvable"], Response::HTTP_BAD_REQUEST);
+        };
 
-        } catch (NotEncodableValueException $e) {
+        $garden->setLat($coordinatesCityApi['lat']);
+        $garden->setLon($coordinatesCityApi['lon']);
 
-            return $this->json(["error" => "JSON INVALID"], Response::HTTP_BAD_REQUEST);
-        }
-
-        $cityApi = $this->nominatimApi->getCoordinates($garden->getAddress() . " " .$garden->getCity());
-
-        $garden->setLat($cityApi['lat']);
-        $garden->setLon($cityApi['lon']);
-
+        
         $garden->setUpdatedAt(new DateTimeImmutable());
 
-        $errors = $validator->validate($updatedGarden);
+        $dataErrors = $this->validatorError->returnErrors($garden);
 
-        if (count($errors) > 0) {
-            return $this->json($errors, 400);
+        if ($dataErrors) {
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
         $em->persist($updatedGarden);
@@ -133,35 +191,25 @@ class GardenController extends AbstractController
 
 
     /**
-     * @Route("/api/gardens/{id}", name="app_api_garden_deleteGardenById", methods={"DELETE"})
+     * @Route("/{id}", name="app_api_garden_deleteGardenById", methods={"DELETE"})
+     *
+     * @param Garden $garden id of the garden
+     * @param GardenRepository $gardenRepository
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
      */
     public function deleteGardenById(Garden $garden, GardenRepository $gardenRepository, EntityManagerInterface $em): JsonResponse
     {
         try {
+
             $gardenRepository->remove($garden, true);
 
         } catch (ORMInvalidArgumentException $e) {
 
-            return $this->json(["error" => "le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
+            return $this->json(["error" => "Le jardin n'existe pas"], Response::HTTP_BAD_REQUEST);
+
         }
         
         return $this->json("Le jardin a bien été supprimé", Response::HTTP_OK);
-    }
-
-    /**
-     * @Route("/api/search/gardens", name="app_api_garden_getGardensBySearch", methods={"GET"})
-     */
-    public function getGardensBySearch(Request $request, GardenRepository $gardenRepository): JsonResponse
-    {
-        $dataApi = $this->nominatimApi->getCoordinates($request->query->get('city'));
-
-        $cityLat = $dataApi[ 'lat' ];
-        $cityLon = $dataApi[ 'lon' ];
-
-        $dataDist = $request->query->get('dist');
-
-        $gardens = $gardenRepository->findGardenByCoordonates($cityLat, $cityLon, $dataDist);
-
-        return $this->json($gardens, Response::HTTP_OK);
     }
 }

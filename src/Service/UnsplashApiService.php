@@ -18,41 +18,18 @@ class UnsplashApiService
     }
 
     /**
-     * Return photos from unsplash
+     * Return photos random from unsplash
+     *
+     * @param string $search search related picture to parameter
+     * @return string Url picture
      */
-    public function fetchPhotos($search)
+    public function fetchPhotosRandom(string $search)
     {
 
-        // déclenche une requête asynchrone
         $response = $this->client->request(
-            // méthode htttp
             'GET',
-            // url de l'api
-            'https://api.unsplash.com/search/photos',
-            [
-                // les paramètres ici la clé api et la recherche par mot-clé
-                "query" => [
-                    "client_id" => $this->apiKey,
-                    "query"     => $search
-
-                ]
-            ]
-        );
-
-        return $response->toArray();
-
-    }
-    public function fetchPhotosRandom($search)
-    {
-
-        // déclenche une requête asynchrone
-        $response = $this->client->request(
-            // méthode htttp
-            'GET',
-            // url de l'api
             'https://api.unsplash.com/photos/random',
             [
-                // les paramètres ici la clé api et la recherche par mot-clé
                 "query" => [
                     "client_id" => $this->apiKey,
                     "query"     => $search
@@ -61,7 +38,9 @@ class UnsplashApiService
                 ]
             ]
         );
+
         $photoUrl = $response->toArray()[ 'urls' ][ 'regular' ];
+        
         return $photoUrl;
 
     }

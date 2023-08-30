@@ -38,34 +38,6 @@ class FavoriteRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
-    /**
-     * on affiche tous les favoris d'un utilisateur
-     *
-     * @param integer|null $id
-     * @return array|null
-     */
-    public function findAllFavoritesByUserId(?int $id): ?array
-    {
-        return $this->createQueryBuilder('f')
-             ->innerJoin("f.user","u")
-             ->where("u.id LIKE :id")
-             ->setParameter("id", "%$id%")
-             ->getQuery()
-             ->getResult()
-        ;
-    }
-    public function findOneFavoritesByUserId(int $id,int $favoriteId): ?array
-    {
-        return $this->createQueryBuilder('f')
-             ->innerJoin("f.user","u")
-             ->where("u.id LIKE :id")
-             ->andWhere("f.id LIKE :favoriteId")
-             ->setParameter("id", "%$id%")
-             ->setParameter("favoriteId", "%$favoriteId%")
-             ->getQuery()
-             ->getResult()
-        ;
-    }
 
 //    public function findByExampleField($value): array
 //    {

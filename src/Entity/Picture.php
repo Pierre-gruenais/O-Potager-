@@ -21,16 +21,17 @@ class Picture
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255)
+     * @ORM\Column(type="string", length=255, unique=true)
      * @Assert\NotBlank
      * @Assert\Url
      * @Assert\Length(max=255)
      * @Groups({"gardensWithRelations","usersWithRelations"})
      */
-    private $name;
+    private $url;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Assert\NotBlank
      */
     private $createdAt;
 
@@ -54,18 +55,6 @@ class Picture
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getName(): ?string
-    {
-        return $this->name;
-    }
-
-    public function setName(string $name): self
-    {
-        $this->name = $name;
-
-        return $this;
     }
 
     public function getCreatedAt(): ?\DateTimeImmutable
@@ -100,6 +89,18 @@ class Picture
     public function setGarden(?Garden $garden): self
     {
         $this->garden = $garden;
+
+        return $this;
+    }
+
+    public function getUrl(): ?string
+    {
+        return $this->url;
+    }
+
+    public function setUrl(string $url): self
+    {
+        $this->url = $url;
 
         return $this;
     }
