@@ -22,7 +22,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use App\Service\ValidatorErrorService;
 
 /**
- * @Route("/users")
+ * @Route("api/users")
  */
 
 class UserController extends AbstractController
@@ -30,9 +30,7 @@ class UserController extends AbstractController
 
     private $validatorError;
 
-    public function __construct(
-        validatorErrorService
-        $validatorErrorService
+    public function __construct(ValidatorErrorService $validatorError
     ) {
         $this->validatorError = $validatorError;
     }
