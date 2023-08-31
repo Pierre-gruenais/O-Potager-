@@ -3,7 +3,10 @@
 namespace App\Form;
 
 use App\Entity\Garden;
+use App\Entity\User;
+use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
@@ -12,23 +15,28 @@ class GardenType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('description')
-            ->add('address')
-            ->add('postalCode')
-            ->add('city')
+            ->add('title', TextType::class, [
+                'label' => 'Titre de l\'annonce'
+            ])
+            ->add('description', TextType::class, [
+                'label' => 'Description de l\'annonce'
+            ])
+            ->add('address', TextType::class, [
+                'label' => 'Adresse du jardin'
+            ])
+            ->add('postalCode', TextType::class, [
+                'label' => 'Code postal du jardin'
+            ])
+            ->add('city', TextType::class, [
+                'label' => 'Ville du jardin'
+            ])
             ->add('water')
             ->add('tool')
             ->add('shed')
             ->add('cultivation')
             ->add('surface')
-            ->add('phoneAccess')
-            ->add('createdAt')
-            ->add('updatedAt')
             ->add('state')
-            ->add('lat')
-            ->add('lon')
-            ->add('user')
+            ->add('phoneAccess')
         ;
     }
 
