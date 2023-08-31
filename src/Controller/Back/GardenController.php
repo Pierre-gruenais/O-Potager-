@@ -5,22 +5,37 @@ namespace App\Controller\Back;
 use App\Entity\Garden;
 use App\Form\GardenType;
 use App\Repository\GardenRepository;
+use App\Service\NominatimApiService;
+use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/back/garden")
+ * @Route("/garden")
  */
 class GardenController extends AbstractController
 {
+    private $nominatimApi;
+
     /**
-     * @Route("/", name="app_back_garden_index", methods={"GET"})
+     * Construct of the class
+     *
+     * @param NominatimApiService $nominatimApi NominatimAPI call service
+     * @param ValidatorErrorService $validatorError ValidatorError call service
      */
-    public function index(GardenRepository $gardenRepository): Response
+    public function __construct(NominatimApiService $nominatimApi)
     {
-        return $this->render('back/garden/index.html.twig', [
+        $this->nominatimApi = $nominatimApi;
+    }
+
+    /**
+     * @Route("/", name="app_back_garden_list", methods={"GET"})
+     */
+    public function list(GardenRepository $gardenRepository): Response
+    {
+        return $this->render('back/garden/list.html.twig', [
             'gardens' => $gardenRepository->findAll(),
         ]);
     }
@@ -37,7 +52,7 @@ class GardenController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
             $gardenRepository->add($garden, true);
 
-            return $this->redirectToRoute('app_back_garden_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('back/garden/new.html.twig', [
@@ -63,11 +78,19 @@ class GardenController extends AbstractController
     {
         $form = $this->createForm(GardenType::class, $garden);
         $form->handleRequest($request);
+        
+        $coordinatesCityApi = $this->nominatimApi->getCoordinates($garden->getCity(), $garden->getAddress());
+
+        $garden->setLat($coordinatesCityApi['lat']);
+        $garden->setLon($coordinatesCityApi['lon']);
 
         if ($form->isSubmitted() && $form->isValid()) {
+
+            $garden->setUpdatedAt(new DateTimeImmutable());
+            
             $gardenRepository->add($garden, true);
 
-            return $this->redirectToRoute('app_back_garden_index', [], Response::HTTP_SEE_OTHER);
+            return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('back/garden/edit.html.twig', [

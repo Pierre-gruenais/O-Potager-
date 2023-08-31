@@ -6,6 +6,8 @@ use App\Entity\Garden;
 use App\Entity\User;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\Form\Extension\Core\Type\IntegerType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -30,13 +32,58 @@ class GardenType extends AbstractType
             ->add('city', TextType::class, [
                 'label' => 'Ville du jardin'
             ])
-            ->add('water')
-            ->add('tool')
-            ->add('shed')
-            ->add('cultivation')
-            ->add('surface')
-            ->add('state')
-            ->add('phoneAccess')
+            ->add('water', ChoiceType::class, [
+                'label' => 'Point d\'eau',
+                'choices' => [
+                    'oui' => true,
+                    'non' => false
+                ],
+                'expanded' => true,
+            ] )
+            ->add('tool', ChoiceType::class, [
+                'label' => 'Présence d\'outils',
+                'choices' => [
+                    'oui' => true,
+                    'non' => false
+                ],
+                'expanded' => true,    
+            ])
+            ->add('shed', ChoiceType::class, [
+                'label' => 'Présence d\un abri de jardin',
+                'choices' => [
+                    'oui' => true,
+                    'non' => false
+                ],
+                'expanded' => true,    
+            ])
+            ->add('cultivation', ChoiceType::class, [
+                'label' => 'Cultivation déjà en cours',
+                'choices' => [
+                    'oui' => true,
+                    'non' => false
+                ],
+                'expanded' => true,    
+            ])
+            ->add('surface', IntegerType::class, [
+                'label' => 'Surface du jardin (m²)'
+            ])
+            ->add('state', ChoiceType::class, [
+                'label' => 'Etat du jardin',
+                'choices' => [
+                    'herbe' => 'herbe',
+                    'terre' => 'terre',
+                    'en friche' => 'en friche',
+                ],
+                'expanded' => true,
+            ])
+            ->add('phoneAccess', ChoiceType::class, [
+                'label' => 'Affichage de votre numéro de téléphone sur l\'annonce',
+                'choices' => [
+                    'oui' => true,
+                    'non' => false
+                ],
+                'expanded' => true, 
+                ])
         ;
     }
 

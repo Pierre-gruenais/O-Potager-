@@ -1,13 +1,45 @@
 <!DOCTYPE html>
 <html>
+    
     <head>
         <meta charset="UTF-8">
-            <!-- Bootstrap CSS -->
         <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/minty/bootstrap.min.css" rel="stylesheet">
         <title>{% block title %}BackOffice | O'potager{% endblock %}</title>
     </head>
+
     <body>
+    <header>
+        <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ path('app_back_main_home') }}">O'potager</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarColor02">
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {% block homeActive %}{% endblock %}" href="{{ path('app_back_main_home') }}">Acceuil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% block userActive %}{% endblock %}" href="#">Users</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% block gardenActive %}{% endblock %}" href="{{ path('app_back_garden_list') }}">Jardins</a>
+                        </li>
+                    </ul>
+                    <div>
+                        <p>Connecter en tant que :</h2>
+                    </div>
+                 </div>
+            </div>
+        </nav>
+    </header>
+  
         {% block body %}{% endblock %}
+
+        <footer class="container-fluid py-4 border-top text-center">
+            <span class="text-muted">O'Potager fait par des apprenants de O'clock ! </span>
+        </footer>
     </body>
 
 </html>
