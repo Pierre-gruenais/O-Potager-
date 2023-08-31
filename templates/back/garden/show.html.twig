@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Garden{% endblock %}
+
+{% block body %}
+    <h1>Garden</h1>
+
+    <table class="table">
+        <tbody>
+            <tr>
+                <th>Id</th>
+                <td>{{ garden.id }}</td>
+            </tr>
+            <tr>
+                <th>Title</th>
+                <td>{{ garden.title }}</td>
+            </tr>
+            <tr>
+                <th>Description</th>
+                <td>{{ garden.description }}</td>
+            </tr>
+            <tr>
+                <th>Address</th>
+                <td>{{ garden.address }}</td>
+            </tr>
+            <tr>
+                <th>PostalCode</th>
+                <td>{{ garden.postalCode }}</td>
+            </tr>
+            <tr>
+                <th>City</th>
+                <td>{{ garden.city }}</td>
+            </tr>
+            <tr>
+                <th>Water</th>
+                <td>{{ garden.water ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Tool</th>
+                <td>{{ garden.tool ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Shed</th>
+                <td>{{ garden.shed ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Cultivation</th>
+                <td>{{ garden.cultivation ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>Surface</th>
+                <td>{{ garden.surface }}</td>
+            </tr>
+            <tr>
+                <th>PhoneAccess</th>
+                <td>{{ garden.phoneAccess ? 'Yes' : 'No' }}</td>
+            </tr>
+            <tr>
+                <th>CreatedAt</th>
+                <td>{{ garden.createdAt ? garden.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>UpdatedAt</th>
+                <td>{{ garden.updatedAt ? garden.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+            </tr>
+            <tr>
+                <th>State</th>
+                <td>{{ garden.state }}</td>
+            </tr>
+            <tr>
+                <th>Lat</th>
+                <td>{{ garden.lat }}</td>
+            </tr>
+            <tr>
+                <th>Lon</th>
+                <td>{{ garden.lon }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_back_garden_index') }}">back to list</a>
+
+    <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}">edit</a>
+
+    {{ include('back/garden/_delete_form.html.twig') }}
+{% endblock %}

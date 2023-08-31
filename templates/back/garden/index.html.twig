@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Garden index{% endblock %}
+
+{% block body %}
+    <h1>Garden index</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Title</th>
+                <th>Description</th>
+                <th>Address</th>
+                <th>PostalCode</th>
+                <th>City</th>
+                <th>Water</th>
+                <th>Tool</th>
+                <th>Shed</th>
+                <th>Cultivation</th>
+                <th>Surface</th>
+                <th>PhoneAccess</th>
+                <th>CreatedAt</th>
+                <th>UpdatedAt</th>
+                <th>State</th>
+                <th>Lat</th>
+                <th>Lon</th>
+                <th>actions</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for garden in gardens %}
+            <tr>
+                <td>{{ garden.id }}</td>
+                <td>{{ garden.title }}</td>
+                <td>{{ garden.description }}</td>
+                <td>{{ garden.address }}</td>
+                <td>{{ garden.postalCode }}</td>
+                <td>{{ garden.city }}</td>
+                <td>{{ garden.water ? 'Yes' : 'No' }}</td>
+                <td>{{ garden.tool ? 'Yes' : 'No' }}</td>
+                <td>{{ garden.shed ? 'Yes' : 'No' }}</td>
+                <td>{{ garden.cultivation ? 'Yes' : 'No' }}</td>
+                <td>{{ garden.surface }}</td>
+                <td>{{ garden.phoneAccess ? 'Yes' : 'No' }}</td>
+                <td>{{ garden.createdAt ? garden.createdAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ garden.updatedAt ? garden.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ garden.state }}</td>
+                <td>{{ garden.lat }}</td>
+                <td>{{ garden.lon }}</td>
+                <td>
+                    <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}">show</a>
+                    <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}">edit</a>
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="18">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a href="{{ path('app_back_garden_new') }}">Create new</a>
+{% endblock %}
