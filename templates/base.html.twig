@@ -1,13 +1,18 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8">
-            <!-- Bootstrap CSS -->
-        <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/minty/bootstrap.min.css" rel="stylesheet">
-        <title>{% block title %}BackOffice | O'potager{% endblock %}</title>
-    </head>
-    <body>
-        {% block body %}{% endblock %}
-    </body>
+	<head>
+		<meta
+		charset="UTF-8">
+		<!-- Bootstrap CSS -->
+		<link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/minty/bootstrap.min.css" rel="stylesheet">
+		<title>
+			{% block title %}BackOffice | O'potager
+			{% endblock %}
+		</title>
+	</head>
+	<body>
+		{% include "back/fragments/_flash_message.html.twig" %}
+		{% block body %}{% endblock %}
+	</body>
 
 </html>

@@ -52,7 +52,7 @@ class UserController extends AbstractController
             $user->setUpdatedAt(new \DateTimeImmutable);
 
             $userRepository->add($user, true);
-
+            $this->addFlash("success", "Modifications sur l'utilisateur ".$user->getUsername()." bien prises en compte");
             return $this->redirectToRoute('app_back_user_list', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -71,6 +71,7 @@ class UserController extends AbstractController
         if ($this->isCsrfTokenValid('delete' . $user->getId(), $request->request->get('_token'))) {
             $userRepository->remove($user, true);
         }
+        $this->addFlash("success", "L'utilisateur ".$user->getUsername()." a bien été supprimé ");
 
         return $this->redirectToRoute('app_back_user_list', [], Response::HTTP_SEE_OTHER);
     }
