@@ -1,0 +1,9 @@
+{# read and display all flash messages #}
+{% for label, messages in app.flashes %}
+    {% for message in messages %}
+        <div class="alert alert-dismissible alert-{{label}} m-4">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <p class="mb-0">{{message}}</p>
+        </div>
+    {% endfor %}
+{% endfor %}

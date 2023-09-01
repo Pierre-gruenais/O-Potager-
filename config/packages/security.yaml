@@ -30,6 +30,11 @@ security:
         main:
             lazy: true
             provider: app_user_provider
+            form_login:
+                login_path: app_security_login
+                check_path: app_security_login
+            logout:
+                path: app_security_logout
 
             # activate different ways to authenticate
             # https://symfony.com/doc/current/security.html#the-firewall
@@ -41,9 +46,9 @@ security:
     # Note: Only the *first* access control that matches will be used
     access_control:
             # ! ROUTES API
-         - { path: ^/api/gardens, roles: ROLE_USER, methods: [POST, PUT ,DELETE] }  
-         - { path: ^/api/users, roles: ROLE_USER, methods: [POST, PUT ,DELETE] }  
-         - { path: ^/api/admin, roles: ROLE_ADMIN, methods: [POST, PUT ,DELETE] }
+         - { path: ^/api/gardens, roles: ROLE_USER, methods: [POST, PUT , DELETE] }  
+         - { path: ^/api/users, roles: ROLE_USER, methods: [ PUT , DELETE] }  
+         - { path: ^/admin, roles: ROLE_ADMIN, methods: [GET, PUT , DELETE] }
      # Pour économiser des lignes dans notre ACL et rendre l'application plus logique on hiérarchise les rôles
     role_hierarchy:
     # L'admin a les droits de user
