@@ -156,11 +156,19 @@ class Garden
      */
     private $lon;
 
+    /**
+     * @ORM\Column(type="string", length=30)
+     * @Assert\NotBlank
+     * @Groups({"gardensWithRelations"})
+     */
+    private $checked;
+
     public function __construct()
     {
         $this->createdAt = new \DateTimeImmutable();
         $this->pictures = new ArrayCollection();
         $this->favorites = new ArrayCollection();
+        $this->checked = "En cours";
     }
 
     public function getId(): ?int
@@ -428,6 +436,18 @@ class Garden
     public function setLon(float $lon): self
     {
         $this->lon = $lon;
+
+        return $this;
+    }
+
+    public function getChecked(): ?string
+    {
+        return $this->checked;
+    }
+
+    public function setChecked(string $checked): self
+    {
+        $this->checked = $checked;
 
         return $this;
     }

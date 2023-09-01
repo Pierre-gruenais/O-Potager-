@@ -4,6 +4,7 @@
     <head>
         <meta charset="UTF-8">
         <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/minty/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
         <title>{% block title %}BackOffice | O'potager{% endblock %}</title>
     </head>
 
@@ -18,7 +19,7 @@
                 <div class="collapse navbar-collapse" id="navbarColor02">
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
-                            <a class="nav-link {% block homeActive %}{% endblock %}" href="{{ path('app_back_main_home') }}">Acceuil</a>
+                            <a class="nav-link {% block homeActive %}{% endblock %}" href="{{ path('app_back_main_home') }}">Accueil</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% block userActive %}{% endblock %}" href="#">Users</a>
@@ -34,11 +35,12 @@
             </div>
         </nav>
     </header>
-  
+    <main class="container my-5">
         {% block body %}{% endblock %}
+    </main>
 
         <footer class="container-fluid py-4 border-top text-center">
-            <span class="text-muted">O'Potager fait par des apprenants de O'clock ! </span>
+            <span class="text-muted">O'Potager fait par des apprenants de O'clock <i class="bi bi-balloon-heart"></i></span>
         </footer>
     </body>
 

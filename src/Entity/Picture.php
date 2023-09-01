@@ -21,7 +21,7 @@ class Picture
     private $id;
 
     /**
-     * @ORM\Column(type="string", length=255, unique=true)
+     * @ORM\Column(type="string", length=255)
      * @Assert\NotBlank
      * @Assert\Url
      * @Assert\Length(max=255)

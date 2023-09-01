@@ -1,13 +1,14 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit Garden{% endblock %}
+{% block title %}Backoffice | Modifier un jardin{% endblock %}
 
 {% block body %}
-    <h1>Edit Garden</h1>
+    <h1>Modifier un jardin</h1>
 
-    {{ include('back/garden/_form.html.twig', {'button_label': 'Update'}) }}
+    {{ include('back/garden/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
 
-    <a href="{{ path('app_back_garden_list') }}">back to list</a>
+    <a href="{{ path('app_back_garden_list') }}">Retour à la page liste</a>
 
     {{ include('back/garden/_delete_form.html.twig') }}
+
 {% endblock %}

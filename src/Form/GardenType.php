@@ -49,7 +49,7 @@ class GardenType extends AbstractType
                 'expanded' => true,    
             ])
             ->add('shed', ChoiceType::class, [
-                'label' => 'Présence d\un abri de jardin',
+                'label' => 'Présence d\'un abri de jardin',
                 'choices' => [
                     'oui' => true,
                     'non' => false
@@ -77,10 +77,18 @@ class GardenType extends AbstractType
                 'expanded' => true,
             ])
             ->add('phoneAccess', ChoiceType::class, [
-                'label' => 'Affichage de votre numéro de téléphone sur l\'annonce',
+                'label' => 'Affichage du numéro de téléphone sur l\'annonce',
                 'choices' => [
                     'oui' => true,
                     'non' => false
+                ],
+                'expanded' => true, 
+                ])
+            ->add('checked', ChoiceType::class, [
+                'label' => 'Validation de l\'annonce',
+                'choices' => [
+                    'Valider' => "Valider",
+                    'Refuser' => "Refuser"
                 ],
                 'expanded' => true, 
                 ])

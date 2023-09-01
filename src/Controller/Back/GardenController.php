@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
 /**
- * @Route("/garden")
+ * @Route("/admin/jardins")
  */
 class GardenController extends AbstractController
 {
@@ -41,27 +41,6 @@ class GardenController extends AbstractController
     }
 
     /**
-     * @Route("/new", name="app_back_garden_new", methods={"GET", "POST"})
-     */
-    public function new(Request $request, GardenRepository $gardenRepository): Response
-    {
-        $garden = new Garden();
-        $form = $this->createForm(GardenType::class, $garden);
-        $form->handleRequest($request);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $gardenRepository->add($garden, true);
-
-            return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
-        }
-
-        return $this->renderForm('back/garden/new.html.twig', [
-            'garden' => $garden,
-            'form' => $form,
-        ]);
-    }
-
-    /**
      * @Route("/{id}", name="app_back_garden_show", methods={"GET"})
      */
     public function show(Garden $garden): Response
@@ -72,7 +51,7 @@ class GardenController extends AbstractController
     }
 
     /**
-     * @Route("/{id}/edit", name="app_back_garden_edit", methods={"GET", "POST"})
+     * @Route("/{id}/modifier", name="app_back_garden_edit", methods={"GET", "POST"})
      */
     public function edit(Request $request, Garden $garden, GardenRepository $gardenRepository): Response
     {

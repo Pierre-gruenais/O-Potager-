@@ -35,19 +35,34 @@
         <table class="table table-hover">
             <thead>
                 <tr class="table-primary">
-                <th scope="col">ID</th>
-                <th scope="col">Titre de l'annonce</th>
-                <th scope="col">Date d'ajout</th>
-                <th scope="col">Actions</th>
+                    <th scope="col">ID</th>
+                    <th scope="col">Titre de l'annonce</th>
+                    <th scope="col">Propriétaire</th>
+                    <th scope="col">Date d'ajout</th>
+                    <th scope="col">Actions</th>
+                    <th scope="col">Validation</th>
                 </tr>
             </thead>
             <tbody>
             {% for garden in gardens %}
                 <tr class="table-active">
                 <th scope="row">{{ garden.id }}</th>
-                <td>{{ garden.title }}</td>
-                <td>{{ garden.createdAt ? garden.createdAt|date('d-m-Y') : ''}}</td>
-                <td></td>
+                    <td>{{ garden.title }}</td>
+                    <td>{{ garden.user.username}}</td>
+                    <td>{{ garden.createdAt ? garden.createdAt|date('d-m-Y') : ''}}</td>
+                    <td>
+                        {% if garden.checked == "Valider" %}
+                            <i class="bi bi-bookmark-check"></i>
+                        {% elseif garden.checked == "En cours" %}
+                            <i class="bi bi-arrow-clockwise"></i>
+                        {% else %}
+                            <i class="bi bi-bookmark-x"></i>                  
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}"><i class="bi bi-eye"></i></a>
+                        <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}"><i class="bi bi-pencil"></i></a>
+                    </td>
                 </tr>
             {% endfor %}
             </tbody>

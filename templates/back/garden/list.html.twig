@@ -11,15 +11,13 @@
         <thead>
             <tr>
                 <th>Id</th>
-                <th>Title</th>
+                <th>Titre</th>
                 <th>Description</th>
-                <th>Address</th>
-                <th>PostalCode</th>
-                <th>City</th>
-                <th>Surface</th>
-                <th>State</th>
-                <th>CreatedAt</th>
-                <th>UpdatedAt</th>
+                <th>Code Postal</th>
+                <th>Ville</th>
+                <th>Date d'ajout</th>
+                <th>Dernière mise à jour</th>
+                <th>Validation</th>
                 <th>actions</th>
             </tr>
         </thead>
@@ -29,25 +27,30 @@
                 <td>{{ garden.id }}</td>
                 <td>{{ garden.title }}</td>
                 <td>{{ garden.description }}</td>
-                <td>{{ garden.address }}</td>
                 <td>{{ garden.postalCode }}</td>
                 <td>{{ garden.city }}</td>
-                <td>{{ garden.surface }}</td>
-                <td>{{ garden.state }}</td>
-                <td>{{ garden.createdAt ? garden.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-                <td>{{ garden.updatedAt ? garden.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
+                <td>{{ garden.createdAt ? garden.createdAt|date('Y-m-d') : '' }}</td>
+                <td>{{ garden.updatedAt ? garden.updatedAt|date('Y-m-d') : '' }}</td>
                 <td>
-                    <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}">show</a>
-                    <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}">edit</a>
+                    {% if garden.checked == "Valider" %}
+                        <i class="bi bi-bookmark-check"></i>
+                    {% elseif garden.checked == "En cours" %}
+                        <i class="bi bi-arrow-clockwise"></i>
+                    {% else %}
+                        <i class="bi bi-bookmark-x"></i>                  
+                    {% endif %}
+                </td>
+                <td>
+                    <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}"><i class="bi bi-eye"></i></a>
+                    <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}"><i class="bi bi-pencil"></i></a>
                 </td>
             </tr>
         {% else %}
             <tr>
-                <td colspan="18">no records found</td>
+                <td colspan="18">Pas de résultat</td>
             </tr>
         {% endfor %}
         </tbody>
     </table>
 
-    <a href="{{ path('app_back_garden_new') }}">Create new</a>
 {% endblock %}
