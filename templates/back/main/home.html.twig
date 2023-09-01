@@ -6,62 +6,57 @@
 
 {% block body %}
 
-<div>
-    <div>
-        <h2> Liste des 5 derniers utilisateurs ajoutés</h1>
-            <table class="table table-hover">
-                <thead>
-                    <tr class="table-primary">
-                    <th scope="col">ID</th>
-                    <th scope="col">Nom de l'utilisateur</th>
-                    <th scope="col">Date d'ajout</th>
-                    <th scope="col">Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                
-                    <tr class="table-active">
-                    <th scope="row"></th>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    </tr>
-           
-                </tbody>
-        </table>
+<div class="row">
+    
+    <div class="col-3">
+        <h2 class="fs-5"> Derniers utilisateurs</h1>
+            {% for user in users %}
+                <div class="toast show my-2" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="toast-header">
+                        <strong class="me-auto">N°{{ user.id}} : {{ user.username }}</strong>
+                        <small>{{ user.createdAt ? user.createdAt|date('Y-m-d') : '' }}</small>
+                    </div>
+                    <div class="toast-body">
+                        <p class="card-text">{{ user.email }}</p>
+                        <a href="{{ path('app_back_user_show', {'id': user.id}) }}"><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
+                        <a href="{{ path('app_back_user_edit', {'id': user.id}) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>
+                    </div>
+                </div>
+            {% endfor %}  
     </div>
-    <div>
-        <h2> Liste des 5 derniers jardins ajoutés</h2>
-        <table class="table table-hover">
+                          
+    <div class="col">
+        
+        <h2 class="fs-5"> Jardins à vérifier</h2>
+        
+        <table class="table table-hover border-primary">
             <thead>
                 <tr class="table-primary">
-                    <th scope="col">ID</th>
+                    <th scope="col">N°</th>
                     <th scope="col">Titre de l'annonce</th>
-                    <th scope="col">Propriétaire</th>
-                    <th scope="col">Date d'ajout</th>
+                    <th scope="col">Date</th>
                     <th scope="col">Actions</th>
                     <th scope="col">Validation</th>
                 </tr>
             </thead>
             <tbody>
             {% for garden in gardens %}
-                <tr class="table-active">
-                <th scope="row">{{ garden.id }}</th>
+                <tr class="table-Primary">
+                    <th scope="row">{{ garden.id }}</th>
                     <td>{{ garden.title }}</td>
-                    <td>{{ garden.user.username}}</td>
                     <td>{{ garden.createdAt ? garden.createdAt|date('d-m-Y') : ''}}</td>
-                    <td>
+                    <td class="align-middle">
                         {% if garden.checked == "Valider" %}
                             <i class="bi bi-bookmark-check"></i>
                         {% elseif garden.checked == "En cours" %}
-                            <i class="bi bi-arrow-clockwise"></i>
+                            <button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-arrow-clockwise"></i></button>
                         {% else %}
                             <i class="bi bi-bookmark-x"></i>                  
                         {% endif %}
                     </td>
-                    <td>
-                        <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}"><i class="bi bi-eye"></i></a>
-                        <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}"><i class="bi bi-pencil"></i></a>
+                    <td class="align-middle">
+                        <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}" ><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
+                        <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}" ><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>
                     </td>
                 </tr>
             {% endfor %}

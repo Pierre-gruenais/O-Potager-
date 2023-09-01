@@ -22,14 +22,54 @@
                             <a class="nav-link {% block homeActive %}{% endblock %}" href="{{ path('app_back_main_home') }}">Accueil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% block userActive %}{% endblock %}" href="#">Users</a>
+                            <a class="nav-link {% block userActive %}{% endblock %}" href="{{ path('app_back_user_list')}}">Users</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link {% block gardenActive %}{% endblock %}" href="{{ path('app_back_garden_list') }}">Jardins</a>
                         </li>
                     </ul>
+                    
                     <div>
-                        <p>Connecter en tant que :</h2>
+                    {% if is_granted("IS_AUTHENTICATED_FULLY") %}
+						<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+							<li class="nav-item dropdown">
+								<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown">
+									<span>{{app.user.username}} | 
+									{% if "ROLE_ADMIN" in app.user.roles %}
+										Administrateur
+									{% endif %}
+									</span>
+									<i class="bi bi-person-square"></i>
+								</a>
+								<ul class="dropdown-menu">
+									<li>
+										<a class="dropdown-item" href="#">Profil</a>
+									</li>
+									{% if is_granted("ROLE_MANAGER") %}
+                                        {% if is_granted("BACK_OFFICE_ACCESS") %}
+                                            <li>
+                                                <a class="dropdown-item" href="{{path("app_back_movie_list")}}">Backoffice</a>
+                                            </li>
+                                        {% else %}
+                                            <li>
+                                                <span class="dropdown-item">Rentres chez toi !</span>
+                                            </li>
+                                        {% endif %}
+                                        
+									{% endif %}
+									
+									<li>
+										<hr class="dropdown-divider">
+									</li>
+									<li>
+										<a class="dropdown-item" href="{{path("app_security_logout")}}">Déconnexion</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					{% else %}
+						<a href="{{path("app_security_login")}}"  class="btn btn-danger me-2">Connexion</a>
+					{% endif %}
                     </div>
                  </div>
             </div>
@@ -40,7 +80,7 @@
     </main>
 
         <footer class="container-fluid py-4 border-top text-center">
-            <span class="text-muted">O'Potager fait par des apprenants de O'clock <i class="bi bi-balloon-heart"></i></span>
+            <i class="bi bi-balloon-heart text-secondary"></i><span class="text-muted">O'Potager fait par des apprenants de O'clock <i class="bi bi-balloon-heart text-secondary"></i></span>
         </footer>
     </body>
 
