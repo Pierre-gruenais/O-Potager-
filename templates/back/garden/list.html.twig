@@ -1,0 +1,55 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Backoffice | Liste des jardins{% endblock %}
+
+{% block gardenActive %}active{% endblock %}
+
+{% block body %}
+
+    <h3>Liste des jardins</h3>
+
+    <table class="table table-hover">
+       
+        <thead>
+            <tr class="table-primary text-center">
+                <th scope="col">Id</th>
+                <th scope="col">Titre</th>
+                <th scope="col">Ajouter le</th>
+                <th scope="col">Modifier le</th>
+                <th scope="col">Actions</th>
+                <th scope="col">Statut</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for garden in gardens %}
+                <tr>
+                    <th scope="row">{{ garden.id }}</td>
+                    <td>{{ garden.title }}</td>
+                    <td class="col-2 text-center">{{ garden.createdAt ? garden.createdAt|date('Y-m-d') : '' }}</td>
+                    <td class="col-2 text-center">{{ garden.updatedAt ? garden.updatedAt|date('Y-m-d') : '' }}</td>
+                    <td class="text-center col-2">
+                            <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}"><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
+                            <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>  
+                    </td>
+                    <td class="text-center">
+                        {% if garden.checked == "Valider" %}
+                            <button type="button" class="btn btn-outline-success btn-sm"><i class="bi bi-bookmark-check"></i></button>
+                        {% elseif garden.checked == "En cours" %}
+                            <button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-arrow-clockwise"></i></button>
+                        {% else %}
+                            <button type="button" class="btn btn-outline-danger btn-sm"><i class="bi bi-bookmark-x"></i></button>                  
+                        {% endif %}
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="18">Pas de résultat</td>
+                </tr>
+            {% endfor %}
+            
+        </tbody>
+
+    </table>
+
+{% endblock %}

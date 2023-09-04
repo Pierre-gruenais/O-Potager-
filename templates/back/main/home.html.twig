@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Backoffice | Acceuil{% endblock %}
+
+{% block homeActive %}active{% endblock %}
+
+{% block body %}
+
+<div class="row">
+
+    <div class="col-3">
+
+        <h2 class="fs-4"> Derniers utilisateurs</h2>
+
+        {% for user in users %}
+            <div class="toast show my-2" role="alert" aria-live="assertive" aria-atomic="true">
+                <div class="toast-header">
+                    <strong class="me-auto">N°{{ user.id}} : {{ user.username }}</strong>
+                    <small>{{ user.createdAt ? user.createdAt|date('Y-m-d') : '' }}</small>
+                </div>
+                <div class="toast-body row">
+                    <div class="p-2 col-8">
+                        <p class="card-text">{{ user.email }}</p>
+                        <a href="{{ path('app_back_user_show', {'id': user.id}) }}"><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
+                        <a href="{{ path('app_back_user_edit', {'id': user.id}) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>
+                    </div>
+                    <div class="p-0 col-4">
+                    <img src="{{ user.avatar }}" alt="" class="img-fluid">
+                    </div>
+                </div>
+            </div>
+        {% endfor %}
+
+        <div class="my-3">
+            <a href="{{ path('app_back_user_list')}}"><button type="button" class="btn btn-secondary col-12">Liste des utilisateurs</button></a>
+        </div>
+
+    </div>
+                          
+    <div class="col">
+
+        <h2 class="fs-4"> Jardins à vérifier</h2>
+
+        {% for garden in gardens %}
+            <div class="accordion" id="accordionGardens">
+                <div class="accordion-item">
+                    <h3 class="accordion-header" id="heading{{garden.id}}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{garden.id}}" aria-expanded="false" aria-controls="collapse{{garden.id}}">
+                            N° {{ garden.id }} : {{ garden.title }} 
+                        </button>
+                    </h3>
+                    <div id="collapse{{garden.id}}" class="accordion-collapse collapse" aria-labelledby="heading{{garden.id}}" data-bs-parent="#accordionGardens">
+                        <div class="accordion-body row align-items-end">
+                            <div class="col-6 border-right">
+                                <h4>Informations du jardin :</h4>
+                                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                    <li>{{ garden.user.username}}</li>
+                                    <li>{{ garden.user.email }}</li>
+                                    <li>{{ garden.address }}, {{ garden.postalCode}} {{ garden.city }}</li>
+                                </ul>
+                            </div>
+                            <div class="col">
+                                <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                    <li>Date de publication : {{ garden.createdAt ? garden.createdAt|date('d-m-Y') : ''}}</li>
+                                    <li>Statut de l'annonce :
+                                        {% if garden.checked == "En cours" %}
+                                            <button type="button" class="btn btn-outline-warning btn-sm"><i class="bi bi-arrow-clockwise"></i></button>
+                                        {% endif %}
+                                    </li>
+                                    <li>
+                                        <a href="{{ path('app_back_garden_show', {'id': garden.id}) }}" ><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
+                                        <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}" ><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endfor %}
+
+        <div class="row justify-content-center my-4">
+
+            <div class="col-8">
+                <a href="{{ path('app_back_garden_list')}}"><button type="button" class="btn btn-primary col-12">Liste des jardins</button></a>
+            </div>
+
+        </div>
+
+    
+    </div>
+
+</div>
+
+{% endblock %}

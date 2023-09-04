@@ -1,19 +1,82 @@
 <!DOCTYPE html>
 <html>
+    
     <head>
         <meta charset="UTF-8">
-        <title>{% block title %}Welcome!{% endblock %}</title>
-        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
-        {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
-        {% endblock %}
-
-        {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
-        {% endblock %}
+        <link href="https://cdn.jsdelivr.net/npm/bootswatch@5.3.1/dist/minty/bootstrap.min.css" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+        <title>{% block title %}BackOffice | O'potager{% endblock %}</title>
     </head>
+
     <body>
+
+    <header>
+
+        <nav class="navbar navbar-expand-lg bg-dark" data-bs-theme="dark">
+
+            <div class="container-fluid">
+
+                <a class="navbar-brand" href="{{ path('app_back_main_home') }}">O'potager</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarColor02" aria-controls="navbarColor02" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="navbarColor02">
+                    
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item">
+                            <a class="nav-link {% block homeActive %}{% endblock %}" href="{{ path('app_back_main_home') }}">Accueil</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% block userActive %}{% endblock %}" href="{{ path('app_back_user_list')}}">Utilisateurs</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link {% block gardenActive %}{% endblock %}" href="{{ path('app_back_garden_list') }}">Jardins</a>
+                        </li>
+                    </ul>
+
+                    {% if is_granted("IS_AUTHENTICATED_FULLY") %}
+						<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+							<li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+									<span>{{app.user.username}} | 
+                                        {% if "ROLE_ADMIN" in app.user.roles %}
+                                            Administrateur
+                                        {% endif %}
+									</span>
+									<i class="bi bi-person-square"></i>
+                                </a>
+                                <div class="dropdown-menu">
+                                    <a class="dropdown-item" href="{{ path('app_back_user_show', {'id': app.user.id}) }}">Profil</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ path("app_security_logout") }}">Déconnexion</a>
+                                </div>
+							</li>
+						</ul>
+					{% else %}
+						<a href="{{path("app_security_login")}}"  class="btn btn-danger me-2">Connexion</a>
+					{% endif %}
+                    
+                 </div>
+
+            </div>
+        
+        </nav>
+
+    </header>
+
+    <main class="container my-5">
+        {% include "fragments/_flash_message.html.twig" %}
+        
         {% block body %}{% endblock %}
+    </main>
+
+        <footer class="container-fluid py-4 border-top text-center">
+            <i class="bi bi-balloon-heart text-secondary"></i><span class="text-muted">O'Potager fait par des apprenants de O'clock <i class="bi bi-balloon-heart text-secondary"></i></span>
+        </footer>
+
     </body>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
 </html>
+
