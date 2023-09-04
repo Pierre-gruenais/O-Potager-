@@ -1,53 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Users list
-{% endblock %}
+{% block title %}Backoffice | Liste des utilisateurs{% endblock %}
+
+{% block userActive %}active{% endblock %}
 
 {% block body %}
 
-	<div>
-		<h1>Users list</h1>
-		<table class="table">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>Username</th>
+		<h3>Liste des utilisateurs</h3>
 
-					<th>Email</th>
-					<th>Phone</th>
-					<th>Roles</th>
-					<th>Avatar</th>
-					<th>CreatedAt</th>
-					<th>UpdatedAt</th>
-					<th>actions</th>
+		<table class="table table-hover">
+			
+			<thead>
+				<tr class="table-primary text-center">
+					<th scope="col">Id</th>
+					<th scope="col">Username</th>
+					<th scope="col">Email</th>
+					<th scope="col">Phone</th>
+					<th scope="col">Roles</th>
+					<th scope="col">Ajouter le</th>
+					<th scope="col">Modifier le</th>
+					<th scope="col">actions</th>
 				</tr>
 			</thead>
+
 			<tbody>
 				{% for user in users %}
 					<tr>
 						<td>{{ user.id }}</td>
 						<td>{{ user.username }}</td>
-
 						<td>{{ user.email }}</td>
 						<td>{{ user.phone }}</td>
-						<td>{{ user.roles ? user.roles|json_encode : '' }}</td>
-						{% if (user.avatar) %}
-							<td><img src="{{ user.avatar }}" alt="{{ user.avatar }}" style="width: 80px; height: 80px;"></td>
-						{% endif %}
-						<td>{{ user.createdAt ? user.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-						<td>{{ user.updatedAt ? user.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-						<td>
-							<a href="{{ path('app_back_user_show', {'id': user.id}) }}">show</a>
-							<a href="{{ path('app_back_user_edit', {'id': user.id}) }}">edit</a>
+						<td>{% for role in user.roles %}
+								{% if role == "ROLE_ADMIN" %}
+									Admin
+									<br>
+								{% else %}
+									Utilisateur
+									<br>
+								{% endif %}
+							{% endfor %}</td>
+						<td class="text-center">{{ user.createdAt ? user.createdAt|date('Y-m-d') : '' }}</td>
+						<td class="text-center">{{ user.updatedAt ? user.updatedAt|date('Y-m-d') : '' }}</td>
+						<td class="text-center">
+								<a href="{{ path('app_back_user_show', {'id': user.id}) }}"><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
+								<a href="{{ path('app_back_user_edit', {'id': user.id}) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>  
 						</td>
 					</tr>
 				{% else %}
 					<tr>
-						<td colspan="10">no records found</td>
+						<td colspan="10">Pas de résultat</td>
 					</tr>
 				{% endfor %}
 			</tbody>
 		</table>
 		
-	</div>
 {% endblock %}

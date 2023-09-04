@@ -40,8 +40,8 @@ class UserRepository extends ServiceEntityRepository
     }
 
     /**
-        * @return User[] Returns an array of User objects
-        */
+     * @return User[] Returns an array of User objects
+     */
     public function findFiveByAdd(): array
     {
         return $this->createQueryBuilder('u')

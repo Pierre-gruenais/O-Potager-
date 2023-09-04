@@ -1,90 +1,96 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Backoffice | Garden{% endblock %}
+{% block title %}Backoffice | Jardin{% endblock %}
+
+{% block gardenActive %}active{% endblock %}
 
 {% block body %}
-    <h1>Jardin</h1>
+    
+    <h3>Jardin</h3>
 
-    <table class="table">
-        <tbody>
-            <tr>
-                <th>Id</th>
-                <td>{{ garden.id }}</td>
-            </tr>
-            <tr>
-                <th>Title</th>
-                <td>{{ garden.title }}</td>
-            </tr>
-            <tr>
-                <th>Description</th>
-                <td>{{ garden.description }}</td>
-            </tr>
-            <tr>
-                <th>Adresse</th>
-                <td>{{ garden.address }}</td>
-            </tr>
-            <tr>
-                <th>Code Postal</th>
-                <td>{{ garden.postalCode }}</td>
-            </tr>
-            <tr>
-                <th>Ville</th>
-                <td>{{ garden.city }}</td>
-            </tr>
-            <tr>
-                <th>Point d'eau</th>
-                <td>{{ garden.water ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Outils</th>
-                <td>{{ garden.tool ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Abri de jardin</th>
-                <td>{{ garden.shed ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Cultivation</th>
-                <td>{{ garden.cultivation ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Surface</th>
-                <td>{{ garden.surface }}</td>
-            </tr>
-            <tr>
-                <th>Autorisation d'utilisation du téléphone</th>
-                <td>{{ garden.phoneAccess ? 'Yes' : 'No' }}</td>
-            </tr>
-            <tr>
-                <th>Date d'ajout</th>
-                <td>{{ garden.createdAt ? garden.createdAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>Date de modification</th>
-                <td>{{ garden.updatedAt ? garden.updatedAt|date('Y-m-d H:i:s') : '' }}</td>
-            </tr>
-            <tr>
-                <th>En etat</th>
-                <td>{{ garden.state }}</td>
-            </tr>
-            <tr>
-                <th>Lat</th>
-                <td>{{ garden.lat }}</td>
-            </tr>
-            <tr>
-                <th>Lon</th>
-                <td>{{ garden.lon }}</td>
-            </tr>
-            <tr>
-                <th>Validation de l'annonce</th>
-                <td>{{ garden.checked }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="row">
 
-    <a href="{{ path('app_back_garden_list') }}">Retour à la liste</a>
+        <div class="col-9">
 
-    <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}">Modifier</a>
+            <table class="table">
 
-    {{ include('back/garden/_delete_form.html.twig') }}
+                <tbody>
+                    <tr>
+                        <th>Id</th>
+                        <td>{{ garden.id }}</td>
+                    </tr>
+                    <tr>
+                        <th>Titre</th>
+                        <td>{{ garden.title }}</td>
+                    </tr>
+                    <tr>
+                        <th>Description</th>
+                        <td>{{ garden.description }}</td>
+                    </tr>
+                    <tr>
+                        <th>Adresse</th>
+                        <td>{{ garden.address }}</td>
+                    </tr>
+                    <tr>
+                        <th>Code Postal</th>
+                        <td>{{ garden.postalCode }}</td>
+                    </tr>
+                    <tr>
+                        <th>Ville</th>
+                        <td>{{ garden.city }}</td>
+                    </tr>
+                    <tr>
+                        <th>Point d'eau</th>
+                        <td>{{ garden.water ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Outils</th>
+                        <td>{{ garden.tool ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Abri de jardin</th>
+                        <td>{{ garden.shed ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Cultivation</th>
+                        <td>{{ garden.cultivation ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Surface</th>
+                        <td>{{ garden.surface }}</td>
+                    </tr>
+                    <tr>
+                        <th>Autorisation d'utilisation du téléphone</th>
+                        <td>{{ garden.phoneAccess ? 'Oui' : 'Non' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Etat du jardin</th>
+                        <td>{{ garden.state }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date d'ajout</th>
+                        <td>{{ garden.createdAt ? garden.createdAt|date('Y-m-d') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Date de modification</th>
+                        <td>{{ garden.updatedAt ? garden.updatedAt|date('Y-m-d') : '' }}</td>
+                    </tr>
+                    <tr>
+                        <th>Validation de l'annonce</th>
+                        <td>{{ garden.checked }}</td>
+                    </tr>
+                </tbody>
+                
+            </table>
+
+        </div>
+
+        <div class="btn-group col-3 d-flex flex-column gap-2 align-items-end row my-3 px-5" role="group" aria-label="Basic example">
+            <a href="{{ path('app_back_garden_list') }}"><button type="button" class="btn btn-primary col-12">Retour à la liste</button></a>
+            <a href="{{ path('app_back_garden_edit', {'id': garden.id}) }}"><button type="button" class="btn btn-secondary col-12">Modifier</button></a>
+            {{ include('back/garden/_delete_form.html.twig') }}
+        </div>
+    
+    </div>
+
 {% endblock %}

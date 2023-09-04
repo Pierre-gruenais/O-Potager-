@@ -8,6 +8,7 @@ use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\TextareaType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -20,7 +21,7 @@ class GardenType extends AbstractType
             ->add('title', TextType::class, [
                 'label' => 'Titre de l\'annonce'
             ])
-            ->add('description', TextType::class, [
+            ->add('description', TextareaType::class, [
                 'label' => 'Description de l\'annonce'
             ])
             ->add('address', TextType::class, [
@@ -32,6 +33,9 @@ class GardenType extends AbstractType
             ->add('city', TextType::class, [
                 'label' => 'Ville du jardin'
             ])
+            ->add('surface', IntegerType::class, [
+                'label' => 'Surface du jardin (m²)'
+            ])
             ->add('water', ChoiceType::class, [
                 'label' => 'Point d\'eau',
                 'choices' => [
@@ -39,6 +43,9 @@ class GardenType extends AbstractType
                     'non' => false
                 ],
                 'expanded' => true,
+                "attr" => [
+                    'class' => 'd-flex flex-wrap gap-4'
+                ]
             ] )
             ->add('tool', ChoiceType::class, [
                 'label' => 'Présence d\'outils',
@@ -46,7 +53,10 @@ class GardenType extends AbstractType
                     'oui' => true,
                     'non' => false
                 ],
-                'expanded' => true,    
+                'expanded' => true,
+                "attr" => [
+                    'class' => 'd-flex flex-wrap gap-4'
+                ]    
             ])
             ->add('shed', ChoiceType::class, [
                 'label' => 'Présence d\'un abri de jardin',
@@ -54,7 +64,10 @@ class GardenType extends AbstractType
                     'oui' => true,
                     'non' => false
                 ],
-                'expanded' => true,    
+                'expanded' => true,
+                "attr" => [
+                    'class' => 'd-flex flex-wrap gap-4'
+                ]    
             ])
             ->add('cultivation', ChoiceType::class, [
                 'label' => 'Cultivation déjà en cours',
@@ -62,17 +75,18 @@ class GardenType extends AbstractType
                     'oui' => true,
                     'non' => false
                 ],
-                'expanded' => true,    
+                'expanded' => true,
+                "attr" => [
+                    'class' => 'd-flex flex-wrap gap-4'
+                ]    
             ])
-            ->add('surface', IntegerType::class, [
-                'label' => 'Surface du jardin (m²)'
-            ])
+
             ->add('state', ChoiceType::class, [
                 'label' => 'Etat du jardin',
                 'choices' => [
-                    'herbe' => 'herbe',
-                    'terre' => 'terre',
-                    'en friche' => 'en friche',
+                    'A l\'abandon' => 'abandon',
+                    'Entretenu' => 'entretenu',
+                    'Nettoyer' => 'nettoyer',
                 ],
                 'expanded' => true,
             ])
@@ -82,7 +96,10 @@ class GardenType extends AbstractType
                     'oui' => true,
                     'non' => false
                 ],
-                'expanded' => true, 
+                'expanded' => true,
+                "attr" => [
+                    'class' => 'd-flex flex-wrap gap-4'
+                ]   
                 ])
             ->add('checked', ChoiceType::class, [
                 'label' => 'Validation de l\'annonce',
@@ -90,7 +107,10 @@ class GardenType extends AbstractType
                     'Valider' => "Valider",
                     'Refuser' => "Refuser"
                 ],
-                'expanded' => true, 
+                'expanded' => true,
+                "attr" => [
+                    'class' => 'd-flex flex-wrap gap-4'
+                ]   
                 ])
         ;
     }

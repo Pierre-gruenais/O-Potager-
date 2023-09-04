@@ -2,13 +2,23 @@
 
 {% block title %}Backoffice | Modifier un jardin{% endblock %}
 
+{% block gardenActive %}active{% endblock %}
+
 {% block body %}
-    <h1>Modifier un jardin</h1>
 
-    {{ include('back/garden/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+    <h3>Modifier un jardin</h3>
 
-    <a href="{{ path('app_back_garden_list') }}">Retour à la page liste</a>
+    <div class="row">
 
-    {{ include('back/garden/_delete_form.html.twig') }}
+        <div class="col-9">
+            {{ include('back/garden/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+        </div>
+
+        <div class="btn-group col-3 d-flex flex-column gap-2 align-items-end row my-3 px-5">
+            <a href="{{ path('app_back_garden_list') }}"><button type="button" class="btn btn-primary col-12">Retour à la liste</button></a>
+            {{ include('back/garden/_delete_form.html.twig') }}
+        </div>
+        
+    </div>
 
 {% endblock %}

@@ -56,12 +56,12 @@ class UserType extends AbstractType
             ->add('roles', ChoiceType::class, [
                 "label"        => "Privilèges",
                 "choices"      => [
-                    'oui' => 'ROLE_ADMIN',
-                    'non' => '',
+                    'Administrateur' => 'ROLE_ADMIN',
+                    'Utilisateur' => '',
                 ],
-                // 'choice_label' => true,
+                "expanded"     => true,
                 "multiple"     => true,
-                "expanded"     => true
+                
             ])
             ->add('avatar', UrlType::class, [
                 "label" => "Avatar",

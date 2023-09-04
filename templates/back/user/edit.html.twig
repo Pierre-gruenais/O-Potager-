@@ -1,13 +1,25 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Edit User{% endblock %}
+{% block title %}Backoffice | Modifier un utilisateur{% endblock %}
+
+{% block userActive %}active{% endblock %}
 
 {% block body %}
-    <h1>Edit User</h1>
 
-    {{ include('back/user/_form.html.twig', {'button_label': 'Update'}) }}
+    <h3>Modifier un utilisateur</h3>
 
-    <a href="{{ path('app_back_user_list') }}">back to list</a>
+    <div class="row">
 
-    {{ include('back/user/_delete_form.html.twig') }}
+        <div class="col-9">
+            {{ include('back/user/_form.html.twig', {'button_label': 'Mettre à jour'}) }}
+        </div>
+
+        <div class="btn-group col-3 d-flex flex-column gap-2 align-items-end row my-3 px-5">
+            <a href="{{ path('app_back_user_list') }}"><button type="button" class="btn btn-primary col-12">Retour à la liste</button></a>
+            {{ include('back/user/_delete_form.html.twig') }}
+        </div>
+        
+    </div>
+    
+
 {% endblock %}

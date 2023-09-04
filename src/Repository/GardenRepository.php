@@ -40,8 +40,8 @@ class GardenRepository extends ServiceEntityRepository
     }
 
     /**
-        * @return Garden[] Returns an array of Garden objects
-        */
+     * @return Garden[] Returns an array of Garden objects
+     */
     public function findByCheckedField($value): array
     {
         return $this->createQueryBuilder('g')

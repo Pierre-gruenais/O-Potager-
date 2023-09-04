@@ -59,7 +59,14 @@ class GardenController extends AbstractController
         $form->handleRequest($request);
         
         $coordinatesCityApi = $this->nominatimApi->getCoordinates($garden->getCity(), $garden->getAddress());
-
+        
+        if(!$coordinatesCityApi){
+            $this->addFlash("warning", "L'adresse est introuvable.");
+            return $this->renderForm('back/garden/edit.html.twig', [
+                'garden' => $garden,
+                'form' => $form,
+            ]);
+        }
         $garden->setLat($coordinatesCityApi['lat']);
         $garden->setLon($coordinatesCityApi['lon']);
 
@@ -68,7 +75,7 @@ class GardenController extends AbstractController
             $garden->setUpdatedAt(new DateTimeImmutable());
             
             $gardenRepository->add($garden, true);
-
+            $this->addFlash("success", "Les modifications du jardin ont bien été prises en compte.");
             return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -86,7 +93,8 @@ class GardenController extends AbstractController
         if ($this->isCsrfTokenValid('delete'.$garden->getId(), $request->request->get('_token'))) {
             $gardenRepository->remove($garden, true);
         }
-
-        return $this->redirectToRoute('app_back_garden_index', [], Response::HTTP_SEE_OTHER);
+        $this->addFlash("success", "Le jardin a bien été supprimé.");
+        
+        return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
     }
 }

@@ -14,12 +14,12 @@ use Symfony\Component\Routing\Annotation\Route;
 
 
 /**
- * @Route("/admin/users")
+ * @Route("/admin/utilisateurs")
  */
 class UserController extends AbstractController
 {
     /**
-     * @Route("/list", name="app_back_user_list", methods={"GET"})
+     * @Route("/", name="app_back_user_list", methods={"GET"})
      */
     public function list(UserRepository $userRepository): Response
     {
@@ -41,7 +41,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/edit/{id}", name="app_back_user_edit", methods={"GET", "POST"}, requirements={"id"="\d+"})
+     * @Route("/modifier/{id}", name="app_back_user_edit", methods={"GET", "POST"}, requirements={"id"="\d+"})
      */
     public function edit(Request $request, User $user, UserRepository $userRepository): Response
     {
@@ -64,7 +64,7 @@ class UserController extends AbstractController
     }
 
     /**
-     * @Route("/delete/{id}", name="app_back_user_delete", methods={"POST"}, requirements={"id"="\d+"})
+     * @Route("/supprimer/{id}", name="app_back_user_delete", methods={"POST"}, requirements={"id"="\d+"})
      */
     public function delete(Request $request, User $user, UserRepository $userRepository): Response
     {
