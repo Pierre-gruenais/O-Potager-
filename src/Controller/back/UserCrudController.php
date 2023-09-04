@@ -5,6 +5,7 @@ namespace App\Controller\back;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -65,7 +66,7 @@ class UserCrudController extends AbstractController
     {
         $form = $this->createForm(UserType::class, $user);
         $form->handleRequest($request);
-       dd($user);
+      
         if ($form->isSubmitted() && $form->isValid()) {
 
             
@@ -91,4 +92,33 @@ class UserCrudController extends AbstractController
 
         return $this->redirectToRoute('app_userCrud_list', [], Response::HTTP_SEE_OTHER);
     }
+//! flo route a ajouter dans la branche dev sans merger la branche -->juste copie colle
+ /**
+     * @Route("/add", name="app_back_user_add" ,  methods={"GET", "POST"})
+     * on ajoute un utilisateur
+     */
+
+     public function add(Request $request, EntityManagerInterface $em)
+     {
+         $user = new User();
+ 
+         $form = $this->createForm(UserType::class, $user);
+ 
+         $form->handleRequest($request);
+ 
+         if ($form->isSubmitted() && $form->isValid()) {
+ 
+             $em->persist($user);
+             $em->flush();
+ 
+             $this->addFlash('success', 'User ajouté');
+ 
+             return $this->redirectToRoute('app_back_user_show', ['id' => $user->getId()]);
+         }
+ 
+         return $this->renderForm('faq/question/add.html.twig', [
+             'form' => $form,
+         ]);
+     }
+
 }
