@@ -22,16 +22,19 @@
                 </button>
 
                 <div class="collapse navbar-collapse" id="navbarColor02">
-                    
                     <ul class="navbar-nav me-auto">
                         <li class="nav-item">
                             <a class="nav-link {% block homeActive %}{% endblock %}" href="{{ path('app_back_main_home') }}">Accueil</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {% block userActive %}{% endblock %}" href="{{ path('app_back_user_list')}}">Utilisateurs</a>
-                        </li>
-                        <li class="nav-item">
                             <a class="nav-link {% block gardenActive %}{% endblock %}" href="{{ path('app_back_garden_list') }}">Jardins</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle {% block userActive %}{% endblock %}" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Utilisateurs</a>
+                            <div class="dropdown-menu">
+                                <a class="dropdown-item" href="{{ path('app_back_user_list')}}">Liste</a>
+                                <a class="dropdown-item" href="{{ path('app_back_user_add')}}">Ajouter</a>
+                            </div>
                         </li>
                     </ul>
 
@@ -56,7 +59,6 @@
 					{% else %}
 						<a href="{{path("app_security_login")}}"  class="btn btn-danger me-2">Connexion</a>
 					{% endif %}
-                    
                  </div>
 
             </div>
