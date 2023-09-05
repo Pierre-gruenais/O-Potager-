@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -78,4 +79,32 @@ class UserController extends AbstractController
 
         return $this->redirectToRoute('app_back_user_list', [], Response::HTTP_SEE_OTHER);
     }
+
+    /**
+     * @Route("/ajouter", name="app_back_user_add" ,  methods={"GET", "POST"})
+     * on ajoute un utilisateur
+     */
+
+     public function add(Request $request, EntityManagerInterface $em)
+     {
+         $user = new User();
+ 
+         $form = $this->createForm(UserType::class, $user);
+ 
+         $form->handleRequest($request);
+ 
+         if ($form->isSubmitted() && $form->isValid()) {
+ 
+             $em->persist($user);
+             $em->flush();
+ 
+             $this->addFlash('success', 'Utilisateur bien ajouté');
+ 
+             return $this->redirectToRoute('app_back_user_show', ['id' => $user->getId()]);
+         }
+ 
+         return $this->renderForm('back/user/new.html.twig', [
+             'form' => $form,
+         ]);
+     }
 }

@@ -6,10 +6,12 @@
 
 {% block body %}
 
-		<h3>Liste des utilisateurs</h3>
+		<div class="d-flex justify-content-between">
+			<h3>Liste des utilisateurs</h3>
+			<a href="{{ path('app_back_user_add') }}"><button type="button" class="btn btn-dark btn-sm">Ajouter un utilisateur</button></a>
+		</div>
 
-		<table class="table table-hover">
-			
+		<table class="table table-hover my-3">
 			<thead>
 				<tr class="table-primary text-center">
 					<th scope="col">Id</th>
@@ -22,7 +24,6 @@
 					<th scope="col">actions</th>
 				</tr>
 			</thead>
-
 			<tbody>
 				{% for user in users %}
 					<tr>

@@ -3,8 +3,10 @@
 namespace App\Controller\Back;
 
 use App\Entity\Garden;
+use App\Entity\Picture;
 use App\Form\GardenType;
 use App\Repository\GardenRepository;
+use App\Repository\PictureRepository;
 use App\Service\MyMailerService;
 use App\Service\NominatimApiService;
 use DateTimeImmutable;
@@ -31,7 +33,12 @@ class GardenController extends AbstractController
     }
 
     /**
+     * route for retrieving all garden data
+     * 
      * @Route("/", name="app_back_garden_list", methods={"GET"})
+     *
+     * @param GardenRepository $gardenRepository
+     * @return Response
      */
     public function list(GardenRepository $gardenRepository): Response
     {
@@ -41,7 +48,12 @@ class GardenController extends AbstractController
     }
 
     /**
+     * route to retrieve all data for a garden
+     * 
      * @Route("/{id}", name="app_back_garden_show", methods={"GET"})
+     *
+     * @param Garden $garden id of the garden
+     * @return Response
      */
     public function show(Garden $garden): Response
     {
@@ -51,7 +63,14 @@ class GardenController extends AbstractController
     }
 
     /**
+     * path to update a garden
+     * 
      * @Route("/{id}/modifier", name="app_back_garden_edit", methods={"GET", "POST"})
+     *
+     * @param Request $request
+     * @param Garden $garden id of the garden
+     * @param GardenRepository $gardenRepository
+     * @return Response
      */
     public function edit(Request $request, Garden $garden, GardenRepository $gardenRepository, MyMailerService $mailer): Response
     {
@@ -95,7 +114,14 @@ class GardenController extends AbstractController
     }
 
     /**
+     * Delete a garden by id
+     * 
      * @Route("/{id}", name="app_back_garden_delete", methods={"POST"})
+     *
+     * @param Request $request
+     * @param Garden $garden id of the garden
+     * @param GardenRepository $gardenRepository
+     * @return Response
      */
     public function delete(Request $request, Garden $garden, GardenRepository $gardenRepository): Response
     {
@@ -105,5 +131,27 @@ class GardenController extends AbstractController
         $this->addFlash("success", "Le jardin a bien été supprimé.");
 
         return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
+    }
+
+    /**
+     * delete picture by id
+     * 
+     * @Route("/picture/{id}", name="app_back_garden_deletePicture", methods={"POST"})
+     *
+     * @param Request $request
+     * @param Picture $picture id picture
+     * @param PictureRepository $pictureRepository
+     * @return Response
+     */
+    public function deletePicture(Request $request, Picture $picture, PictureRepository $pictureRepository): Response
+    {
+        if ($this->isCsrfTokenValid('delete'.$picture->getId(), $request->request->get('_token'))) {
+            $pictureRepository->remove($picture, true);
+        }
+        $this->addFlash("success", "La photo a bien été supprimée.");
+        
+        $referer = $request->headers->get("referer");
+        
+        return $this->redirect($referer);
     }
 }
