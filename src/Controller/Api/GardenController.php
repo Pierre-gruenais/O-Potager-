@@ -3,7 +3,9 @@
 namespace App\Controller\Api;
 
 use App\Entity\Garden;
+use App\Entity\Picture;
 use App\Repository\GardenRepository;
+use App\Repository\PictureRepository;
 use App\Service\NominatimApiService;
 use App\Service\ValidatorErrorService;
 use DateTimeImmutable;
@@ -191,6 +193,8 @@ class GardenController extends AbstractController
 
 
     /**
+     * Delete a garden by id
+     * 
      * @Route("/{id}", name="app_api_garden_deleteGardenById", methods={"DELETE"})
      *
      * @param Garden $garden id of the garden
@@ -211,5 +215,65 @@ class GardenController extends AbstractController
         }
         
         return $this->json("Le jardin a bien été supprimé", Response::HTTP_OK);
+    }
+
+
+    /**
+     * add new picture to garden
+     * 
+     * @Route("/{id}/picture", name="app_api_garden_addPictureToRegisteredGarden", methods={"POST"}) 
+     * 
+     * @param Garden $garden id of the garden
+     * @param GardenRepository $gardenRepository
+     * @param EntityManagerInterface $em
+     * @return JsonResponse
+     */
+    public function addPictureToRegisteredGarden(Garden $garden, Request $request, SerializerInterface $serializer, EntityManagerInterface $em): JsonResponse
+    {
+
+        $jsonContent = $request->getContent();
+
+        $picture = $serializer->deserialize($jsonContent, Picture::class, 'json');
+
+        $dataErrors = $this->validatorError->returnErrors($garden);
+
+        if ($dataErrors) {
+            return $this->json($dataErrors, Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+        $picture->setGarden($garden);
+        $em->persist($picture);
+        $em->flush();
+
+        return $this->json(
+            "L'image a bien été ajoutée au jardin ",
+            Response::HTTP_CREATED,
+            ["Location" => $this->generateUrl("app_api_garden_getGardenById", ["id" => $garden->getId()])],
+            ["groups" => "gardensWithRelations"]
+        );
+
+    }
+
+    /**
+     * delete picture by id
+     * 
+     * @Route("/picture/{id}", name="app_api_garden_deletePictureFromRegisteredGarden", methods={"DELETE"})
+     *
+     * @param Picture $picture id of the picture
+     * @param PictureRepository $pictureRepository
+     * @return JsonResponse
+     */
+    public function deletePictureFromRegisteredGarden(Picture $picture, PictureRepository $pictureRepository): JsonResponse
+    {
+        try {
+
+            $pictureRepository->remove($picture, true);
+
+        } catch (ORMInvalidArgumentException $e) {
+
+            return $this->json(["error" => "L'image n'existe pas"], Response::HTTP_BAD_REQUEST);
+
+        }
+
+        return $this->json("L'image a bien été supprimée", Response::HTTP_OK);
     }
 }

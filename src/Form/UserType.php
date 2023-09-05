@@ -20,7 +20,6 @@ class UserType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
-
         $builder
             ->add('username', TextType::class, [
                 "label" => "Username"
@@ -39,19 +38,16 @@ class UserType extends AbstractType
                     "type"            => PasswordType::class,
                     'invalid_message' => 'Les deux champs doivent être identique',
                     'required'        => true,
-                    'first_options'   => ['label' => 'Le mot de passe', "attr" => ["placeholder" => "*****"]],
+                    'first_options'   => ['label' => 'Mot de passe', "attr" => ["placeholder" => "*****"]],
                     'second_options'  => ['label' => 'Répétez le mot de passe', "attr" => ["placeholder" => "*****"]],
                 ]);
         }
         $builder
             ->add('email', EmailType::class, [
-                "label" => "L'email",
-                "attr"  => [
-                    "placeholder" => "Email de l'utilisateur"
-                ]
+                "label" => "Email",
             ])
             ->add('phone', TextType::class, [
-                "label" => "Phone number"
+                "label" => "Numéro de téléphone"
             ])
             ->add('roles', ChoiceType::class, [
                 "label"        => "Privilèges",
@@ -64,10 +60,7 @@ class UserType extends AbstractType
                 
             ])
             ->add('avatar', UrlType::class, [
-                "label" => "Avatar",
-                "attr"  => [
-                    "placeholder" => "Url pour le moment"
-                ]
+                "label" => "Url de l'image",
             ])
             ->add('createdAt', DateType::class, [
                 "label"    => "Date de creation",

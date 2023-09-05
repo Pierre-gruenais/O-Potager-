@@ -12,7 +12,7 @@
 
         <div class="col-9">
 
-            <table class="table">
+            <table class="table my-3">
 
                 <tbody>
                     <tr>
@@ -78,6 +78,19 @@
                     <tr>
                         <th>Validation de l'annonce</th>
                         <td>{{ garden.checked }}</td>
+                    </tr>
+                    <tr>
+                        <th>Photos</th>
+                        <td class="text-center">            
+                            <div class="row">
+                                {% for picture in garden.pictures %}
+                                    <div class="col">
+                                        <img class="img-fluid h-75" src="{{ picture.url }}" alt="">
+                                        {{ include('back/garden/_delete_picture_form.html.twig') }}
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </td>
                     </tr>
                 </tbody>
                 
