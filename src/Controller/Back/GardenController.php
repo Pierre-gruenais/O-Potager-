@@ -5,6 +5,7 @@ namespace App\Controller\Back;
 use App\Entity\Garden;
 use App\Form\GardenType;
 use App\Repository\GardenRepository;
+use App\Service\MyMailerService;
 use App\Service\NominatimApiService;
 use DateTimeImmutable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -23,7 +24,6 @@ class GardenController extends AbstractController
      * Construct of the class
      *
      * @param NominatimApiService $nominatimApi NominatimAPI call service
-     * @param ValidatorErrorService $validatorError ValidatorError call service
      */
     public function __construct(NominatimApiService $nominatimApi)
     {
@@ -53,35 +53,44 @@ class GardenController extends AbstractController
     /**
      * @Route("/{id}/modifier", name="app_back_garden_edit", methods={"GET", "POST"})
      */
-    public function edit(Request $request, Garden $garden, GardenRepository $gardenRepository): Response
+    public function edit(Request $request, Garden $garden, GardenRepository $gardenRepository, MyMailerService $mailer): Response
     {
         $form = $this->createForm(GardenType::class, $garden);
         $form->handleRequest($request);
-        
+
         $coordinatesCityApi = $this->nominatimApi->getCoordinates($garden->getCity(), $garden->getAddress());
-        
-        if(!$coordinatesCityApi){
+
+        if (!$coordinatesCityApi) {
             $this->addFlash("warning", "L'adresse est introuvable.");
             return $this->renderForm('back/garden/edit.html.twig', [
                 'garden' => $garden,
-                'form' => $form,
+                'form'   => $form,
             ]);
         }
-        $garden->setLat($coordinatesCityApi['lat']);
-        $garden->setLon($coordinatesCityApi['lon']);
+        $garden->setLat($coordinatesCityApi[ 'lat' ]);
+        $garden->setLon($coordinatesCityApi[ 'lon' ]);
 
         if ($form->isSubmitted() && $form->isValid()) {
 
             $garden->setUpdatedAt(new DateTimeImmutable());
-            
+
             $gardenRepository->add($garden, true);
             $this->addFlash("success", "Les modifications du jardin ont bien été prises en compte.");
-            return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
+
+            // envoi d'un email apres moderation par la validation de l'edit
+            // $to = $garden->getUser()->getEmail();
+            //! demo 
+            $to = "mikabernik@gmail.com";
+            // dd($to);
+            $mailer->send("validation de votre jardin", "emails/moderation.html.twig",["garden" => $garden] , $to);
+            $this->addFlash("success", "Un email avertissant de l'acceptation du jardin par nos moderateur a bien été envoyé.");
+
+            return $this->redirectToRoute('app_back_garden_list',[], Response::HTTP_SEE_OTHER);
         }
 
         return $this->renderForm('back/garden/edit.html.twig', [
             'garden' => $garden,
-            'form' => $form,
+            'form'   => $form,
         ]);
     }
 
@@ -90,11 +99,11 @@ class GardenController extends AbstractController
      */
     public function delete(Request $request, Garden $garden, GardenRepository $gardenRepository): Response
     {
-        if ($this->isCsrfTokenValid('delete'.$garden->getId(), $request->request->get('_token'))) {
+        if ($this->isCsrfTokenValid('delete' . $garden->getId(), $request->request->get('_token'))) {
             $gardenRepository->remove($garden, true);
         }
         $this->addFlash("success", "Le jardin a bien été supprimé.");
-        
+
         return $this->redirectToRoute('app_back_garden_list', [], Response::HTTP_SEE_OTHER);
     }
 }
