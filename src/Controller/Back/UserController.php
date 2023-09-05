@@ -15,6 +15,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * @Route("/admin/utilisateurs")
+ * Retrieve a list of users
  */
 class UserController extends AbstractController
 {
@@ -29,9 +30,9 @@ class UserController extends AbstractController
     }
 
 
-
     /**
      * @Route("/{id}", name="app_back_user_show", methods={"GET"}, requirements={"id"="\d+"})
+     * Retrieve datas of a user
      */
     public function show(User $user): Response
     {
@@ -42,6 +43,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/modifier/{id}", name="app_back_user_edit", methods={"GET", "POST"}, requirements={"id"="\d+"})
+     * Update user datas
      */
     public function edit(Request $request, User $user, UserRepository $userRepository): Response
     {
@@ -65,6 +67,7 @@ class UserController extends AbstractController
 
     /**
      * @Route("/supprimer/{id}", name="app_back_user_delete", methods={"POST"}, requirements={"id"="\d+"})
+     * Delete user 
      */
     public function delete(Request $request, User $user, UserRepository $userRepository): Response
     {
