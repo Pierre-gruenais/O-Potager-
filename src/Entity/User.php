@@ -59,7 +59,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     /**
      * @ORM\Column(type="json", length=128)
-     * @Assert\NotBlank
      * @Groups({"usersWithRelations"})
      */
     private $roles;

@@ -53,7 +53,6 @@ class UserType extends AbstractType
                 "label"        => "Privilèges",
                 "choices"      => [
                     'Administrateur' => 'ROLE_ADMIN',
-                    'Utilisateur' => '',
                 ],
                 "expanded"     => true,
                 "multiple"     => true,
