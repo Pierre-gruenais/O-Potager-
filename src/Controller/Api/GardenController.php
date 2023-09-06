@@ -221,7 +221,7 @@ class GardenController extends AbstractController
     /**
      * add new picture to garden
      * 
-     * @Route("/{id}/picture", name="app_api_garden_addPictureToRegisteredGarden", methods={"POST"}) 
+     * @Route("/{id}/pictures", name="app_api_garden_addPictureToRegisteredGarden", methods={"POST"}) 
      * 
      * @param Garden $garden id of the garden
      * @param GardenRepository $gardenRepository
@@ -256,7 +256,7 @@ class GardenController extends AbstractController
     /**
      * delete picture by id
      * 
-     * @Route("/picture/{id}", name="app_api_garden_deletePictureFromRegisteredGarden", methods={"DELETE"})
+     * @Route("/pictures/{id}", name="app_api_garden_deletePictureFromRegisteredGarden", methods={"DELETE"})
      *
      * @param Picture $picture id of the picture
      * @param PictureRepository $pictureRepository
@@ -275,5 +275,21 @@ class GardenController extends AbstractController
         }
 
         return $this->json("L'image a bien été supprimée", Response::HTTP_OK);
+    }
+
+    /**
+     * get pictures by garden Id
+     * 
+     * @Route("/{id}/pictures", name="app_api_garden_getPictureByGarden", methods={"GET"})
+     *
+     * @param integer $id 
+     * @param PictureRepository $pictureRepository
+     * @return JsonResponse
+     */
+    public function getPictureByGarden(int $id, PictureRepository $pictureRepository): JsonResponse
+    {
+        $pictures = $pictureRepository->findBy(['garden' => $id]);
+
+        return $this->json($pictures, Response::HTTP_OK);
     }
 }

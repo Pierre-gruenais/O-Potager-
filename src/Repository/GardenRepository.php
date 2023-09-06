@@ -87,7 +87,7 @@ class GardenRepository extends ServiceEntityRepository
             ORDER BY dist ASC
             ';
 
-            $resultSet = $conn->executeQuery($sql, ['distance' => $distance]);
+        $resultSet = $conn->executeQuery($sql, ['distance' => $distance]);
 
         return $resultSet->fetchAllAssociative();
     }
