@@ -16,10 +16,8 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\Serializer\Exception\NotEncodableValueException;
 use Symfony\Component\Serializer\Normalizer\AbstractNormalizer;
 use Symfony\Component\Serializer\SerializerInterface;
-use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
  * @Route("/api/gardens")
@@ -290,6 +288,6 @@ class GardenController extends AbstractController
     {
         $pictures = $pictureRepository->findBy(['garden' => $id]);
 
-        return $this->json($pictures, Response::HTTP_OK);
+        return $this->json($pictures, Response::HTTP_OK, [], ['groups' => 'picturesGarden']);
     }
 }

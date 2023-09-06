@@ -79,7 +79,6 @@ class UserController extends AbstractController
     public function postUsers(
         Request $request,
         SerializerInterface $serializer,
-        ValidatorInterface $validator,
         EntityManagerInterface $entityManager,
         UserPasswordHasherInterface $userPasswordHasher
     ): JsonResponse {

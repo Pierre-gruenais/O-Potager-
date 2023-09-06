@@ -60,6 +60,7 @@ class UserType extends AbstractType
             ])
             ->add('avatar', UrlType::class, [
                 "label" => "Url de l'image",
+                "required" => false,
             ])
             ->add('createdAt', DateType::class, [
                 "label"    => "Date de creation",
