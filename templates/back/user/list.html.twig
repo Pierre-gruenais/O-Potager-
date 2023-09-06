@@ -31,15 +31,18 @@
 						<td>{{ user.username }}</td>
 						<td>{{ user.email }}</td>
 						<td>{{ user.phone }}</td>
-						<td>{% for role in user.roles %}
+						<td>
+							{% set break = false %}
+							{% for role in user.roles %}
 								{% if role == "ROLE_ADMIN" %}
 									Admin
-									<br>
-								{% else %}
-									Utilisateur
-									<br>
+									{% set break = true %}
 								{% endif %}
-							{% endfor %}</td>
+								{% if not break %}
+									Utilisateur
+								{% endif %}
+							{% endfor %}
+						</td>
 						<td class="text-center">{{ user.createdAt ? user.createdAt|date('Y-m-d') : '' }}</td>
 						<td class="text-center">{{ user.updatedAt ? user.updatedAt|date('Y-m-d') : '' }}</td>
 						<td class="text-center">

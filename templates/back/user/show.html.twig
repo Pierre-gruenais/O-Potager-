@@ -32,15 +32,16 @@
 						<td>{{ user.phone }}</td>
 					</tr>
 					<tr>
-						<th>Rôles :</th>
+						<th>Rôle :</th>
 						<td>
+							{% set break = false %}
 							{% for role in user.roles %}
 								{% if role == "ROLE_ADMIN" %}
 									Admin
-									<br>
-								{% else %}
+									{% set break = true %}
+								{% endif %}
+								{% if not break %}
 									Utilisateur
-									<br>
 								{% endif %}
 							{% endfor %}
 						</td>
@@ -48,7 +49,7 @@
 					</tr>
 					<tr>
 						<th>Avatar :</th>
-						<td ><img src="{{ user.avatar }}" alt="{{ user.avatar }}" class="img-fluid"></td>
+						<td ><img src="{{ user.avatar }}" alt="Avatar de {{ user.avatar }}" style="width:80px"></td>
 					</tr>
 					<tr>
 						<th>Ajouté le:</th>
