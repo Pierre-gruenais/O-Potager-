@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Backoffice | Acceuil{% endblock %}
+{% block title %}Backoffice | Accueil{% endblock %}
 
 {% block homeActive %}active{% endblock %}
 
@@ -19,13 +19,13 @@
                     <small>{{ user.createdAt ? user.createdAt|date('Y-m-d') : '' }}</small>
                 </div>
                 <div class="toast-body row">
-                    <div class="p-2 col-8">
+                    <div class="col-8">
                         <p class="card-text">{{ user.email }}</p>
                         <a href="{{ path('app_back_user_show', {'id': user.id}) }}"><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
                         <a href="{{ path('app_back_user_edit', {'id': user.id}) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>
                     </div>
-                    <div class="p-0 col-4">
-                    <img src="{{ user.avatar }}" alt="" class="img-fluid">
+                    <div class="my-2 col-4 text-center">
+                        <img src="{{ user.avatar }}" alt="Avatar de {{ user.username }}"  class="img-fluid">
                     </div>
                 </div>
             </div>

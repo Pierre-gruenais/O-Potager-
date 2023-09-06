@@ -85,7 +85,7 @@ class UserController extends AbstractController
      * on ajoute un utilisateur
      */
 
-     public function add(Request $request, EntityManagerInterface $em)
+     public function add(Request $request, EntityManagerInterface $em, UserPasswordHasherInterface $userPasswordHasher)
      {
          $user = new User();
  
@@ -94,7 +94,11 @@ class UserController extends AbstractController
          $form->handleRequest($request);
  
          if ($form->isSubmitted() && $form->isValid()) {
- 
+             
+             $password = $user->getPassword();
+             
+             $user->setPassword($userPasswordHasher->hashPassword($user, $password));
+             
              $em->persist($user);
              $em->flush();
  

@@ -80,14 +80,14 @@ class GardenRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
-            SELECT *,' . $formule .' AS dist
+            SELECT garden.*, user.username, user.email, user.phone,' . $formule .' AS dist
             FROM garden
             INNER JOIN user ON garden.user_id = user.id
             WHERE ' . $formule . '<= :distance 
             ORDER BY dist ASC
             ';
 
-            $resultSet = $conn->executeQuery($sql, ['distance' => $distance]);
+        $resultSet = $conn->executeQuery($sql, ['distance' => $distance]);
 
         return $resultSet->fetchAllAssociative();
     }

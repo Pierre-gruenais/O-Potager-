@@ -85,7 +85,7 @@
                             <div class="row">
                                 {% for picture in garden.pictures %}
                                     <div class="col">
-                                        <img class="img-fluid h-75" src="{{ picture.url }}" alt="">
+                                        <img class="img-fluid h-75" src="{{ picture.url }}" alt="Image du potager de {{ garden.user.username }}">
                                         {{ include('back/garden/_delete_picture_form.html.twig') }}
                                     </div>
                                 {% endfor %}
