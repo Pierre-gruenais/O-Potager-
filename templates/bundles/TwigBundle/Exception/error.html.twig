@@ -3,11 +3,14 @@
 {% block body %}
 
     {% if status_code is same as 404 %}
-        <h2>La page que vous cherchez n'est pas accessible...</h2>
+        <h2 class='text-center'>La page que vous cherchez n'est pas accessible...</h2>
         <img class='mx-auto my-4 d-block img-fluid h-auto w-25' src="{{ asset('images/error404.jpg') }}" alt="Logo page 404">
     {% elseif status_code is same as 500 %}
-        <h2>Oops nous rencontrons actuellement un soucis, merci de patienter 1 minutes et de réessayer</h2>
+        <h2 class='text-center'>Oops nous rencontrons actuellement un soucis, merci de patienter 1 minutes et de réessayer...</h2>
         <img class='mx-auto my-4 d-block img-fluid h-auto w-25' src="{{ asset('images/error500.jpg') }}" alt="Logo page 500">
+    {% elseif status_code is same as 403 %}
+        <h2 class='text-center'>Cette partie du site est strictement réservé aux administrateurs...</h2>
+        <img class='mx-auto my-4 d-block img-fluid h-auto w-25' src="{{ asset('images/error403.jpg') }}" alt="Logo page 403">
     {% endif %}
 
     <a class="d-block text-center my-4" href="{{path('app_back_main_home')}}">Retourner sur la page d'accueil...</a>

@@ -25,7 +25,9 @@
                         <a href="{{ path('app_back_user_edit', {'id': user.id}) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>
                     </div>
                     <div class="my-2 col-4 text-center">
-                        <img src="{{ user.avatar }}" alt="Avatar de {{ user.username }}"  class="img-fluid">
+                        {% if user.avatar %}
+                            <img src='{{ user.avatar }}' alt='Avatar de {{ user.avatar }}' style='width:80px'>
+                        {% endif %}
                     </div>
                 </div>
             </div>
