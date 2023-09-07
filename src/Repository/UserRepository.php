@@ -45,7 +45,7 @@ class UserRepository extends ServiceEntityRepository
     public function findFiveByAdd(): array
     {
         return $this->createQueryBuilder('u')
-            ->orderBy('u.createdAt', 'ASC')
+            ->orderBy('u.createdAt', 'DESC')
             ->setMaxResults(5)
             ->getQuery()
             ->getResult()
