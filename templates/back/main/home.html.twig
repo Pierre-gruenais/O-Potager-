@@ -19,14 +19,14 @@
                     <small>{{ user.createdAt ? user.createdAt|date('Y-m-d') : '' }}</small>
                 </div>
                 <div class="toast-body row">
-                    <div class="col-8">
+                    <div class="col-9">
                         <p class="card-text">{{ user.email }}</p>
                         <a href="{{ path('app_back_user_show', {'id': user.id}) }}"><button type="button" class="btn btn-primary btn-sm"><i class="bi bi-eye"></i></button></a>
                         <a href="{{ path('app_back_user_edit', {'id': user.id}) }}"><button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pencil"></i></button></a>
                     </div>
-                    <div class="my-2 col-4 text-center">
+                    <div class="m-auto col-3 text-center">
                         {% if user.avatar %}
-                            <img src='{{ user.avatar }}' alt='Avatar de {{ user.avatar }}' style='width:80px'>
+                            <img src='{{ user.avatar }}' alt='Avatar de {{ user.avatar }}' class="img-fluid">
                         {% endif %}
                     </div>
                 </div>

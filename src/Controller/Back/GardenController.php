@@ -65,7 +65,7 @@ class GardenController extends AbstractController
     /**
      * path to update a garden
      * 
-     * @Route("/{id}/modifier", name="app_back_garden_edit", methods={"GET", "POST"})
+     * @Route("/modifier/{id}", name="app_back_garden_edit", methods={"GET", "POST"})
      *
      * @param Request $request
      * @param Garden $garden id of the garden
@@ -114,7 +114,7 @@ class GardenController extends AbstractController
     /**
      * Delete a garden by id
      * 
-     * @Route("/{id}", name="app_back_garden_delete", methods={"POST"})
+     * @Route("/supprimer/{id}", name="app_back_garden_delete", methods={"POST"})
      *
      * @param Request $request
      * @param Garden $garden id of the garden
@@ -134,7 +134,7 @@ class GardenController extends AbstractController
     /**
      * delete picture by id
      * 
-     * @Route("/picture/{id}", name="app_back_garden_deletePicture", methods={"POST"})
+     * @Route("/images/{id}", name="app_back_garden_deletePicture", methods={"POST"})
      *
      * @param Request $request
      * @param Picture $picture id picture

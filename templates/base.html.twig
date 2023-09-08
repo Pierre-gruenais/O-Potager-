@@ -39,25 +39,27 @@
                     </ul>
 
                     {% if is_granted("IS_AUTHENTICATED_FULLY") %}
-						<ul class="navbar-nav ms-auto mb-2 mb-lg-0">
-							<li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
-									<span>{{app.user.username}} | 
-                                        {% if "ROLE_ADMIN" in app.user.roles %}
-                                            Administrateur
-                                        {% endif %}
-									</span>
-									<i class="bi bi-person-square"></i>
-                                </a>
-                                <div class="dropdown-menu">
-                                    <a class="dropdown-item" href="{{ path('app_back_user_show', {'id': app.user.id}) }}">Profil</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ path("app_security_logout") }}">Déconnexion</a>
-                                </div>
-							</li>
-						</ul>
+                        {% if "ROLE_ADMIN" in app.user.roles %}
+                            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                                <li class="nav-item dropdown">
+                                    <a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <span>{{app.user.username}} | 
+                                                Administrateur
+                                        </span>
+                                        <i class="bi bi-person-square"></i>
+                                    </a>
+                                    <div class="dropdown-menu">
+                                        <a class="dropdown-item" href="{{ path('app_back_user_show', {'id': app.user.id}) }}">Profil</a>
+                                        <div class="dropdown-divider"></div>
+                                        <a class="dropdown-item" href="{{ path("app_security_logout") }}">Déconnexion</a>
+                                    </div>
+                                </li>
+                            </ul>
+                        {% else %}
+                            <a class="btn btn-danger me-2" href="{{ path("app_security_logout") }}">Déconnexion</a>
+                        {% endif %}
 					{% else %}
-						<a href="{{path("app_security_login")}}"  class="btn btn-danger me-2">Connexion</a>
+						<a href="{{path("app_security_login")}}"  class="btn btn-primary me-2">Connexion</a>
 					{% endif %}
                  </div>
 
