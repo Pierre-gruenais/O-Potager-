@@ -80,7 +80,7 @@ class GardenRepository extends ServiceEntityRepository
         $conn = $this->getEntityManager()->getConnection();
 
         $sql = '
-            SELECT garden.*, user.username, user.email, user.phone,' . $formule .' AS dist
+            SELECT garden.*, user.username, user.email, user.phone, user.avatar,' . $formule .' AS dist
             FROM garden
             INNER JOIN user ON garden.user_id = user.id
             WHERE ' . $formule . '<= :distance 
